@@ -5,10 +5,23 @@
  */
 package ProductRequestAnalyzer;
 
+import jade.core.Agent;
+
 /**
  *
  * @author Philipp
  */
-public class PRA_Agent {
+public class PRA_Agent extends Agent
+{
+    @Override
+    protected void setup()
+    {
+        
+    }
     
+    @Override
+    protected void takeDown()
+    {
+        
+    }
 }

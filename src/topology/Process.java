@@ -21,5 +21,25 @@ public class Process
         this.name = name;
         this.properties = properties;
     }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public Hashtable getProperties()
+    {
+        return properties;
+    }
+
+    public void setProperties(Hashtable properties)
+    {
+        this.properties = properties;
+    }
     
 }

@@ -5,8 +5,15 @@
  */
 package main;
 
+import jade.core.Profile;
+import jade.core.ProfileImpl;
+import jade.wrapper.AgentContainer;
+import jade.wrapper.AgentController;
+import jade.wrapper.StaleProxyException;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -20,7 +27,34 @@ public class Main
      */
     public static void main(String[] args)
     {
+        // TODO code application logic here
+        jade.core.Runtime rt = jade.core.Runtime.instance();
+        System.out.println("Runtime created");
         
+        Profile profile = new ProfileImpl(null, 1200, null);
+        System.out.println("profile created");
+        AgentContainer mainContainer = rt.createMainContainer(profile);
+        
+        ProfileImpl pContainer = new ProfileImpl(null, 1200, null);
+        System.out.println("Launching the agent container ..."+pContainer);
+        AgentContainer cont = rt.createAgentContainer(pContainer);
+        System.out.println("Launching the agent container after ..." +pContainer);
+        System.out.println("containers created");
+        System.out.println("Launching the rma agent on the main container ...");
+        try
+        {
+            AgentController rma = mainContainer.createNewAgent("rma", "jade.tools.rma.rma", new Object[0]);
+            rma.start();
+            Object[] b = {initTop()};
+            AgentController topa = cont.createNewAgent("TopologyAgent", "topology.TopologyAgent", b);
+            topa.start();
+            
+            
+        }
+        catch(StaleProxyException ex)
+        {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public static LinkedList<topology.Process> initTop()

@@ -6,7 +6,15 @@
 package topology;
 
 import jade.core.Agent;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
+import jade.wrapper.AgentController;
+import jade.wrapper.StaleProxyException;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -22,11 +30,41 @@ public class TopologyAgent extends Agent
         Object[] args = getArguments();
         if (args != null && args.length > 0)
         {
-            LinkedList<Process> pList = (LinkedList<Process>) args[0];
+            MainTopology mainTopology = (MainTopology) args[0];
+            if(mainTopology.getprocessList()!= null)
+            {
+                mainTopology.getprocessList().forEach((processList) ->
+                {
+                    try
+                    {
+                        Object[] arg = {processList};
+                        AgentController feAgent = getContainerController().createNewAgent("FE-Agent " + processList.getName(), "functionalentity.FEAgent", arg);
+                        feAgent.start();
+                    } catch (StaleProxyException ex)
+                    {
+                        Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                });
+            }
+            
         } else
         {
             System.out.println("No Toplogy found");
             doDelete();
+        }
+        
+        DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName(getAID());
+        ServiceDescription sd = new ServiceDescription();
+        sd.setType("Topology");
+        sd.setName("Factory-Topology");
+        dfd.addServices(sd);
+        try
+        {
+            DFService.register(this, dfd);
+        } catch (FIPAException fe)
+        {
+            fe.printStackTrace();
         }
         
 

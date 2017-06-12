@@ -13,6 +13,8 @@ import jade.core.Agent;
  */
 public class PRA_Agent extends Agent
 {
+    private ProductRequest prq;
+    
     @Override
     protected void setup()
     {
@@ -21,7 +23,7 @@ public class PRA_Agent extends Agent
         Object[] args = getArguments();
         if(args!= null && args.length > 0)
         {
-            ProductRequest prq = (ProductRequest) args[0];
+            prq = (ProductRequest) args[0];
         }
         
         else
@@ -35,5 +37,10 @@ public class PRA_Agent extends Agent
     protected void takeDown()
     {
         System.out.println("PRA_Agent " + getAID().getName() + " terminating");
+    }
+
+    public ProductRequest getPrq()
+    {
+        return prq;
     }
 }

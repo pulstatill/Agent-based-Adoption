@@ -14,6 +14,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import topology.MainTopology;
 
 /**
  *
@@ -45,7 +46,7 @@ public class Main
         {
             AgentController rma = mainContainer.createNewAgent("rma", "jade.tools.rma.rma", new Object[0]);
             rma.start();
-            Object[] b = {initTop()};
+            Object[] b = {new MainTopology(initTop())};
             AgentController topa = cont.createNewAgent("TopologyAgent", "topology.TopologyAgent", b);
             topa.start();
             

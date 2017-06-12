@@ -6,24 +6,30 @@
 package topology;
 
 import jade.core.behaviours.Behaviour;
+import jade.lang.acl.ACLMessage;
 
 /**
  *
  * @author Philipp
  */
-public class CheckTopologyToPR extends Behaviour
+public class TopologyBehaviour extends Behaviour
 {
+    private int step = 0;
 
     @Override
     public void action()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        switch (step)
+        {
+            case 0:
+                ACLMessage cfp = new ACLMessage(0);
+        }
     }
 
     @Override
     public boolean done()
     {
-        return true;//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return false;//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

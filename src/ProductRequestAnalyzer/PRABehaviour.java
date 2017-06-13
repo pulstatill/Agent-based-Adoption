@@ -10,10 +10,8 @@ import jade.core.behaviours.Behaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
-import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import java.io.IOException;
 import java.io.Serializable;
 
 /**

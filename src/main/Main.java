@@ -46,11 +46,12 @@ public class Main
         {
             AgentController rma = mainContainer.createNewAgent("rma", "jade.tools.rma.rma", new Object[0]);
             rma.start();
-            Object[] b = {new MainTopology(initTop())};
-            AgentController topa = cont.createNewAgent("TopologyAgent", "topology.TopologyAgent", b);
+            Object[] args1 = {new MainTopology(initTop())};
+            AgentController topa = cont.createNewAgent("TopologyAgent", "topology.TopologyAgent", args1);
             topa.start();
-            
-            
+            Object[] args2 = {new ProductRequestAnalyzer.ProductRequest(initPRQ())};
+            AgentController pra = cont.createNewAgent("PRA-Agent", "ProductRequestAnalyzer.PRA_Agent", args2);
+            pra.start();
         }
         catch(StaleProxyException ex)
         {
@@ -103,7 +104,7 @@ public class Main
         prqList.add(new topology.Product("ZwischenProdukt", properties));
         properties = new Hashtable();
         properties.put("Geschwindigkeit", new Integer(2));
-        prqList.add(new topology.Product("verteilen", properties));
+        prqList.add(new topology.Process("verteilen", properties));
         properties = new Hashtable();
         properties.put("Durchmesser", new Integer(8));
         properties.put("Höhe", new Integer(3));
@@ -113,7 +114,7 @@ public class Main
         prqList.add(new topology.Product("ZwischenProdukt", properties));
         properties = new Hashtable();
         properties.put("Geschwindigkeit", new Integer(2));
-        prqList.add(new topology.Product("prüfe und transport", properties));
+        prqList.add(new topology.Process("prüfe und transport", properties));
         properties = new Hashtable();
         properties.put("Durchmesser", new Integer(8));
         properties.put("Höhe", new Integer(3));
@@ -125,7 +126,7 @@ public class Main
         properties.put("Geschwindigkeit", new Integer(1));
         properties.put("Bohrdurchmesser", new Integer(1));
         properties.put("Bohrtiefe", new Integer(2));
-        prqList.add(new topology.Product("bearbeiten", properties));
+        prqList.add(new topology.Process("bearbeiten", properties));
         properties = new Hashtable();
         properties.put("Durchmesser", new Integer(8));
         properties.put("Höhe", new Integer(3));
@@ -135,7 +136,7 @@ public class Main
         prqList.add(new topology.Product("ZwischenProdukt", properties));
         properties = new Hashtable();
         properties.put("Geschwindigkeit", new Integer(1));
-        prqList.add(new topology.Product("lagern", properties));
+        prqList.add(new topology.Process("lagern", properties));
         properties = new Hashtable();
         properties.put("Durchmesser", new Integer(8));
         properties.put("Höhe", new Integer(3));

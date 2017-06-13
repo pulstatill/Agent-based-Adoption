@@ -23,6 +23,8 @@ import java.util.logging.Logger;
 public class TopologyAgent extends Agent
 {
 
+    private MainTopology mainTopology;
+
     @Override
     protected void setup()
     {
@@ -30,14 +32,17 @@ public class TopologyAgent extends Agent
         Object[] args = getArguments();
         if (args != null && args.length > 0)
         {
-            MainTopology mainTopology = (MainTopology) args[0];
-            if(mainTopology.getprocessList()!= null)
+            mainTopology = (MainTopology) args[0];
+            if (mainTopology.getprocessList() != null)
             {
                 mainTopology.getprocessList().forEach((processList) ->
                 {
                     try
                     {
-                        Object[] arg = {processList};
+                        Object[] arg =
+                        {
+                            processList
+                        };
                         AgentController feAgent = getContainerController().createNewAgent("FE-Agent " + processList.getName(), "functionalentity.FEAgent", arg);
                         feAgent.start();
                     } catch (StaleProxyException ex)
@@ -46,33 +51,37 @@ public class TopologyAgent extends Agent
                     }
                 });
             }
-            
+
         } else
         {
             System.out.println("No Toplogy found");
             doDelete();
         }
-        
-        DFAgentDescription dfd = new DFAgentDescription();
-        dfd.setName(getAID());
-        ServiceDescription sd = new ServiceDescription();
-        sd.setType("Topology");
-        sd.setName("Factory-Topology");
-        dfd.addServices(sd);
+
         try
         {
+            DFAgentDescription dfd = new DFAgentDescription();
+            dfd.setName(getAID());
+            ServiceDescription sd = new ServiceDescription();
+            sd.setType("Topology");
+            sd.setName("Factory-Topology");
+            dfd.addServices(sd);
             DFService.register(this, dfd);
         } catch (FIPAException fe)
         {
-            fe.printStackTrace();
+            Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, fe);
         }
-        
 
     }
 
     @Override
     protected void takeDown()
     {
-        
+
+    }
+
+    public MainTopology getMainTopology()
+    {
+        return mainTopology;
     }
 }

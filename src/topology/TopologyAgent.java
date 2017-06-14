@@ -71,7 +71,7 @@ public class TopologyAgent extends Agent
         {
             Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, fe);
         }
-
+        addBehaviour(new TopologyBehaviour());
     }
 
     @Override

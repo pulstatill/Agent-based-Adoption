@@ -31,6 +31,7 @@ public class PRA_Agent extends Agent
             System.out.println("No ProductRequest found.");
             doDelete();
         }
+        addBehaviour(new PRABehaviour());
     }
     
     @Override

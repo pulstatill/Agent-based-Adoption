@@ -11,7 +11,7 @@ import java.util.Hashtable;
  *
  * @author Philipp
  */
-public class Process
+public class Process implements java.io.Serializable
 {
     private String name;
     private Hashtable properties;

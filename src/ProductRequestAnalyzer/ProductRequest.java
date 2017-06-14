@@ -12,7 +12,7 @@ import topology.Process;
  *
  * @author Philipp
  */
-public class ProductRequest
+public class ProductRequest implements java.io.Serializable
 {
     private LinkedList pList;
 

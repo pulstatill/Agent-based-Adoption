@@ -48,7 +48,12 @@ public class TopologyBehaviour extends Behaviour
                                 }
                             }
                         }
-                        if (outoforder)
+                        if (!outoforder)
+                        {
+                            reply.setPerformative(ACLMessage.PROPOSE);
+                            reply.setContent("everythings fit");
+                            myAgent.send(reply);
+                        } else
                         {
                             boolean noprocessmissing = true;
                             for (int i = 0; i < (prq.getpList().size() - 1) / 2; i++)
@@ -68,12 +73,9 @@ public class TopologyBehaviour extends Behaviour
                                     reply.setPerformative(ACLMessage.PROPOSE);
                                     reply.setContent("processes are not in order");
                                     i = (prq.getpList().size() - 1) / 2;
+                                    myAgent.send(reply);
                                 }
                             }
-                        } else
-                        {
-                            reply.setPerformative(ACLMessage.PROPOSE);
-                            reply.setContent("everythings fit");
                         }
 
                     } catch (UnreadableException ex)

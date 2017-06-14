@@ -28,14 +28,15 @@ public class PRABehaviour extends Behaviour
     @Override
     public void action()
     {
+        System.out.println("Behaviour ready");
         switch (step)
         {
             case 0:
                 ACLMessage cfp = new ACLMessage(ACLMessage.REQUEST);
                 DFAgentDescription template = new DFAgentDescription();
                 ServiceDescription sd = new ServiceDescription();
-                sd.setName("JADE-book-trading");
-                sd.setType("book-selling");
+                sd.setType("Topology");
+                sd.setName("Factory-Topology");
                 template.addServices(sd);
                 try
                 {
@@ -47,6 +48,8 @@ public class PRABehaviour extends Behaviour
                     cfp.setConversationId("Request-Topology");
                     cfp.setReplyWith("Request-Topology" + System.currentTimeMillis());
                     mt = MessageTemplate.and(MessageTemplate.MatchConversationId("Request-Topology"), MessageTemplate.MatchInReplyTo(cfp.getReplyWith()));
+                    myAgent.send(cfp);
+                    System.out.println("Message sent");
                 } catch (Exception ex)
                 {
                     ex.printStackTrace();
@@ -60,7 +63,7 @@ public class PRABehaviour extends Behaviour
                 {
                     if (reply.getPerformative() == ACLMessage.PROPAGATE)
                     {
-                        
+                        System.out.println(reply.getContent());
                     }
                 } else
                 {

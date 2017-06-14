@@ -11,7 +11,7 @@ import java.util.Hashtable;
  *
  * @author Philipp
  */
-public class Product 
+public class Product implements java.io.Serializable
 {
     private String name;
     private Hashtable properties;

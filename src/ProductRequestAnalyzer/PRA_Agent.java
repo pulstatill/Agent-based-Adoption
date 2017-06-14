@@ -6,6 +6,14 @@
 package ProductRequestAnalyzer;
 
 import jade.core.Agent;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import main.Debugger;
+import topology.TopologyAgent;
 
 /**
  *
@@ -18,26 +26,42 @@ public class PRA_Agent extends Agent
     @Override
     protected void setup()
     {
-        System.out.println("Hello! PRA_Agent " + getAID().getName() + " is ready");
+        Debugger.log("Hello! PRA_Agent " + getAID().getName() + " is ready");
         
         Object[] args = getArguments();
         if(args!= null && args.length > 0)
         {
             prq = (ProductRequest) args[0];
+            Debugger.log("Product Request found");
         }
         
         else
         {
-            System.out.println("No ProductRequest found.");
+            Debugger.log("No ProductRequest found.");
             doDelete();
         }
+        try
+        {
+            DFAgentDescription dfd = new DFAgentDescription();
+            dfd.setName(getAID());
+            ServiceDescription sd = new ServiceDescription();
+            sd.setType("ProductRequestAnalyzer");
+            sd.setName("Product-Request-Analyzer");
+            dfd.addServices(sd);
+            DFService.register(this, dfd);
+            Debugger.log("DFService registered");
+        } catch (FIPAException fe)
+        {
+            Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, fe);
+        }
         addBehaviour(new PRABehaviour());
+        Debugger.log("PRABehaviour added");
     }
     
     @Override
     protected void takeDown()
     {
-        System.out.println("PRA_Agent " + getAID().getName() + " terminating");
+        Debugger.log("PRA_Agent " + getAID().getName() + " terminating");
     }
 
     public ProductRequest getPrq()

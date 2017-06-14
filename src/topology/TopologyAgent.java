@@ -15,6 +15,7 @@ import jade.wrapper.StaleProxyException;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import main.Debugger;
 
 /**
  *
@@ -28,11 +29,12 @@ public class TopologyAgent extends Agent
     @Override
     protected void setup()
     {
-        System.out.println("Helllo! Toplogy-agent " + getAID().getName() + " is ready.");
+        Debugger.log("Helllo! Toplogy-agent " + getAID().getName() + " is ready.");
         Object[] args = getArguments();
         if (args != null && args.length > 0)
         {
             mainTopology = (MainTopology) args[0];
+            Debugger.log("Topolgy found");
             if (mainTopology.getprocessList() != null)
             {
                 mainTopology.getprocessList().forEach((processList) ->
@@ -45,6 +47,7 @@ public class TopologyAgent extends Agent
                         };
                         AgentController feAgent = getContainerController().createNewAgent("FE-Agent " + processList.getName(), "functionalentity.FEAgent", arg);
                         feAgent.start();
+                        Debugger.log("FE-Agent for Process " + processList.getName() + " initialized");
                     } catch (StaleProxyException ex)
                     {
                         Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, ex);
@@ -54,7 +57,7 @@ public class TopologyAgent extends Agent
 
         } else
         {
-            System.out.println("No Toplogy found");
+            Debugger.log("No Toplogy found");
             doDelete();
         }
 
@@ -67,6 +70,7 @@ public class TopologyAgent extends Agent
             sd.setName("Factory-Topology");
             dfd.addServices(sd);
             DFService.register(this, dfd);
+            Debugger.log("DFService registered");
         } catch (FIPAException fe)
         {
             Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, fe);
@@ -77,7 +81,7 @@ public class TopologyAgent extends Agent
     @Override
     protected void takeDown()
     {
-
+        Debugger.log("TopologyAgent " + getAID().getName() +" terminating");
     }
 
     public MainTopology getMainTopology()

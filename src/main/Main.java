@@ -30,18 +30,17 @@ public class Main
     {
         // TODO code application logic here
         jade.core.Runtime rt = jade.core.Runtime.instance();
-        System.out.println("Runtime created");
+        Debugger.log("Runtime created");
         
         Profile profile = new ProfileImpl(null, 1200, null);
-        System.out.println("profile created");
+        Debugger.log("profile created");
         AgentContainer mainContainer = rt.createMainContainer(profile);
         
         ProfileImpl pContainer = new ProfileImpl(null, 1200, null);
-        System.out.println("Launching the agent container ..."+pContainer);
+        Debugger.log("Launching the agent container ..."+pContainer);
         AgentContainer cont = rt.createAgentContainer(pContainer);
-        System.out.println("Launching the agent container after ..." +pContainer);
-        System.out.println("containers created");
-        System.out.println("Launching the rma agent on the main container ...");
+        Debugger.log("container " + pContainer + " created");
+        Debugger.log("Launching the rma agent on the main container ...");
         try
         {
             AgentController rma = mainContainer.createNewAgent("rma", "jade.tools.rma.rma", new Object[0]);
@@ -49,6 +48,13 @@ public class Main
             Object[] args1 = {new MainTopology(initTop())};
             AgentController topa = cont.createNewAgent("TopologyAgent", "topology.TopologyAgent", args1);
             topa.start();
+            try
+            {
+                Thread.sleep(100);
+            } catch (InterruptedException ex)
+            {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
             Object[] args2 = {new ProductRequestAnalyzer.ProductRequest(initPRQ())};
             AgentController pra = cont.createNewAgent("PRA-Agent", "ProductRequestAnalyzer.PRA_Agent", args2);
             pra.start();

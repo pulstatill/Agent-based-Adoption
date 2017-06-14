@@ -13,6 +13,7 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import java.io.Serializable;
+import main.Debugger;
 
 /**
  *
@@ -20,18 +21,18 @@ import java.io.Serializable;
  */
 public class PRABehaviour extends Behaviour
 {
-
+    
     private int step = 0;
     private AID topology;
     private MessageTemplate mt;
-
+    
     @Override
     public void action()
     {
-        System.out.println("Behaviour ready");
         switch (step)
         {
             case 0:
+                Debugger.log("PRABehaviour Step 0");
                 ACLMessage cfp = new ACLMessage(ACLMessage.REQUEST);
                 DFAgentDescription template = new DFAgentDescription();
                 ServiceDescription sd = new ServiceDescription();
@@ -49,34 +50,44 @@ public class PRABehaviour extends Behaviour
                     cfp.setReplyWith("Request-Topology" + System.currentTimeMillis());
                     mt = MessageTemplate.and(MessageTemplate.MatchConversationId("Request-Topology"), MessageTemplate.MatchInReplyTo(cfp.getReplyWith()));
                     myAgent.send(cfp);
-                    System.out.println("Message sent");
+                    Debugger.log("Message sent");
                 } catch (Exception ex)
                 {
                     ex.printStackTrace();
                 }
-                step = 1;
+                step ++;
                 break;
-
+            
             case 1:
+                Debugger.log("PRABehaviour Step 1");
                 ACLMessage reply = myAgent.receive(mt);
                 if (reply != null)
                 {
                     if (reply.getPerformative() == ACLMessage.PROPAGATE)
                     {
-                        System.out.println(reply.getContent());
+                        switch (reply.getContent())
+                        {
+                            case "everythings fit":
+                                step++;
+                                Debugger.log("Order of Topology mesh. Next Step");
+                                break;
+                            case "out of order":  break;
+                            case "process missing":
+                                break;
+                        }
                     }
                 } else
                 {
                     block();
                 }
-
+            
         }
     }
-
+    
     @Override
     public boolean done()
     {
         return false;
     }
-
+    
 }

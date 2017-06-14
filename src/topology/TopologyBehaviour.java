@@ -28,8 +28,9 @@ public class TopologyBehaviour extends Behaviour
         switch (step)
         {
             case 0:
-                MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
+                MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
                 ACLMessage msg = myAgent.receive(mt);
+                
                 if (msg != null)
                 {
                     ACLMessage reply = msg.createReply();
@@ -45,12 +46,14 @@ public class TopologyBehaviour extends Behaviour
                                 if (!((topology.Process) prq.getpList().get(i * 2 + 1)).getName().equalsIgnoreCase(mainTopology.getprocessList().get(i).getName()))
                                 {
                                     outoforder = true;
+                                    System.out.println("out of order");
                                 }
                             }
                         }
                         if (!outoforder)
                         {
-                            reply.setPerformative(ACLMessage.PROPOSE);
+                            
+                            reply.setPerformative(ACLMessage.PROPAGATE);
                             reply.setContent("everythings fit");
                             myAgent.send(reply);
                         } else
@@ -70,7 +73,7 @@ public class TopologyBehaviour extends Behaviour
                                 }
                                 if (processmissing)
                                 {
-                                    reply.setPerformative(ACLMessage.PROPOSE);
+                                    reply.setPerformative(ACLMessage.PROPAGATE);
                                     reply.setContent("processes are not in order");
                                     i = (prq.getpList().size() - 1) / 2;
                                     myAgent.send(reply);
@@ -84,13 +87,17 @@ public class TopologyBehaviour extends Behaviour
                     }
 
                 }
+                else
+                {
+                    block();
+                }
         }
     }
 
     @Override
     public boolean done()
     {
-        return false;//throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
 }

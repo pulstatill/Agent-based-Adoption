@@ -6,6 +6,14 @@
 package functionalentity;
 
 import jade.core.Agent;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import main.Debugger;
+import topology.TopologyAgent;
 
 /**
  *
@@ -13,15 +21,41 @@ import jade.core.Agent;
  */
 public class FEAgent extends Agent
 {
+    private topology.Process process;
     @Override
     protected void setup()
     {
-        
+         Debugger.log("Hello! FEAgent " + getAID().getName() + " is ready");
+         Object[] args = getArguments();
+         if(args != null && args.length > 0)
+         {
+             process = (topology.Process) args[0];
+             Debugger.log("Process found: " + process.getName() + "  " + getAID().getName());
+         }
+         else
+         {
+             Debugger.log("No Process was found: " + getAID().getName());
+             doDelete();
+         }
+         try
+        {
+            DFAgentDescription dfd = new DFAgentDescription();
+            dfd.setName(getAID());
+            ServiceDescription sd = new ServiceDescription();
+            sd.setType("Process");
+            sd.setName(process.getName());
+            dfd.addServices(sd);
+            DFService.register(this, dfd);
+            Debugger.log("DFService registered");
+        } catch (FIPAException fe)
+        {
+            Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, fe);
+        }
     }
     
      @Override
     protected void takeDown()
     {
-        
+        Debugger.log("FEAgent: " + getAID().getName() + " terminating");
     }
 }

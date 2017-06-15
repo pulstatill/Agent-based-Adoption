@@ -70,7 +70,7 @@ public class TopologyAgent extends Agent
             sd.setName("Factory-Topology");
             dfd.addServices(sd);
             DFService.register(this, dfd);
-            Debugger.log("DFService registered");
+            Debugger.log("DFService: " + sd.getName() + " registered");
         } catch (FIPAException fe)
         {
             Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, fe);

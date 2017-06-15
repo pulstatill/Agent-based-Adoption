@@ -11,6 +11,7 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import main.Debugger;
 
 /**
  *
@@ -34,6 +35,7 @@ public class TopologyBehaviour extends Behaviour
                 if (msg != null)
                 {
                     ACLMessage reply = msg.createReply();
+                    reply.setPerformative(ACLMessage.INFORM);
                     try
                     {
                         ProductRequestAnalyzer.ProductRequest prq = (ProductRequestAnalyzer.ProductRequest) msg.getContentObject();
@@ -46,14 +48,12 @@ public class TopologyBehaviour extends Behaviour
                                 if (!((topology.Process) prq.getpList().get(i * 2 + 1)).getName().equalsIgnoreCase(mainTopology.getprocessList().get(i).getName()))
                                 {
                                     outoforder = true;
-                                    System.out.println("out of order");
+                                    Debugger.log("out of order");
                                 }
                             }
                         }
                         if (!outoforder)
                         {
-                            
-                            reply.setPerformative(ACLMessage.PROPAGATE);
                             reply.setContent("everythings fit");
                             myAgent.send(reply);
                         } else
@@ -73,7 +73,6 @@ public class TopologyBehaviour extends Behaviour
                                 }
                                 if (processmissing)
                                 {
-                                    reply.setPerformative(ACLMessage.PROPAGATE);
                                     reply.setContent("processes are not in order");
                                     i = (prq.getpList().size() - 1) / 2;
                                     myAgent.send(reply);

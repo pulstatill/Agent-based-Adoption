@@ -49,7 +49,7 @@ public class PRA_Agent extends Agent
             sd.setName("Product-Request-Analyzer");
             dfd.addServices(sd);
             DFService.register(this, dfd);
-            Debugger.log("DFService registered");
+            Debugger.log("DFService: " + sd.getName() + " registered");
         } catch (FIPAException fe)
         {
             Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, fe);

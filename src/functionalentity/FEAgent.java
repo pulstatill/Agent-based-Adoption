@@ -46,7 +46,7 @@ public class FEAgent extends Agent
             sd.setName(process.getName());
             dfd.addServices(sd);
             DFService.register(this, dfd);
-            Debugger.log("DFService registered");
+            Debugger.log("DFService: " + sd.getName() + " registered");
         } catch (FIPAException fe)
         {
             Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, fe);

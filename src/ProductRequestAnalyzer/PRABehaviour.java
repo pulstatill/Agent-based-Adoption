@@ -29,6 +29,10 @@ public class PRABehaviour extends Behaviour
     private int step = 0;
     private AID top;
     private MessageTemplate mt;
+    private int msgtofe;
+    private LinkedList<MessageTemplate> mts = new LinkedList<MessageTemplate>();
+
+    ;
 
     @Override
     public void action()
@@ -78,8 +82,12 @@ public class PRABehaviour extends Behaviour
                                 Debugger.log("Order of Topology mesh. Next Step");
                                 break;
                             case "out of order":
+                                step++;
+                                Debugger.log("Processes out of Order");
                                 break;
                             case "process missing":
+                                step++;
+                                Debugger.log("Some Prcesses are missing");
                                 break;
                         }
                     }
@@ -87,10 +95,13 @@ public class PRABehaviour extends Behaviour
                 {
                     block();
                 }
+                break;
             case 2:
+                Debugger.log("PRABehaviour Step 2");
                 LinkedList plist = ((PRA_Agent) myAgent).getPrq().getpList();
                 AID processname;
-                for (int i = 0; i < plist.size(); i += 2)
+
+                for (int i = 0; i < plist.size() - 1; i += 2)
                 {
                     template.removeServices(sd);
                     sd.setType("Process");
@@ -99,20 +110,19 @@ public class PRABehaviour extends Behaviour
                     try
                     {
                         DFAgentDescription[] searchfe = DFService.search(myAgent, template);
-                        if(searchfe != null)
+                        if (searchfe != null)
                         {
-                            for (int j = 0; j < searchfe.length; i++)
+                            for (DFAgentDescription searchfe1 : searchfe)
                             {
-                                processname = searchfe[j].getName();
+                                processname = searchfe1.getName();
                                 request = new ACLMessage(ACLMessage.REQUEST);
                                 request.addReceiver(processname);
-                                request.setConversationId(processname.getName());
+                                request.setConversationId("Process-PRA");
                                 request.setReplyWith("Property of Process" + System.currentTimeMillis());
-                                mt = MessageTemplate.and(MessageTemplate.MatchConversationId("Request Process property"), MessageTemplate.MatchInReplyTo(request.getReplyWith()));
+                                mt = (MessageTemplate.and(MessageTemplate.MatchConversationId("Request Process property"), MessageTemplate.MatchInReplyTo(request.getReplyWith())));                         
                                 myAgent.send(request);
-                                Debugger.log("Message sent to request Process properties of:"  +  processname.getName());
-                                
-                                
+                                Debugger.log("Message sent to request Process properties of:" + processname.getName());
+                                msgtofe++;
                             }
                         }
                     } catch (FIPAException ex)
@@ -121,6 +131,27 @@ public class PRABehaviour extends Behaviour
                     }
 
                 }
+                step++;
+                break;
+            case 3:
+                Debugger.log("PRABehaviour Step 3");
+                ACLMessage replys = myAgent.receive();
+                if(replys != null)
+                {
+                    Debugger.log("Message received");
+                    if(replys.getPerformative() == ACLMessage.INFORM)
+                    {
+                        Debugger.log(replys.getContent());
+                        step++;
+                    }
+                
+                }
+                else {
+                    block();
+                }
+                    
+                
+                break;
         }
     }
 

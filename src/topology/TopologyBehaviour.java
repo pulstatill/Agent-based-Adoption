@@ -90,6 +90,7 @@ public class TopologyBehaviour extends Behaviour
                 {
                     block();
                 }
+                break;
         }
     }
 

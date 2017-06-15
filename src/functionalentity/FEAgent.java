@@ -51,11 +51,17 @@ public class FEAgent extends Agent
         {
             Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, fe);
         }
+         addBehaviour(new FEBehaviour());
     }
     
      @Override
     protected void takeDown()
     {
         Debugger.log("FEAgent: " + getAID().getName() + " terminating");
+    }
+
+    public topology.Process getProcess()
+    {
+        return process;
     }
 }

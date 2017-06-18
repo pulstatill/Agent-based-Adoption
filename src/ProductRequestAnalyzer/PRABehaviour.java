@@ -14,6 +14,7 @@ import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -21,6 +22,7 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.Debugger;
+import topology.MainTopology;
 
 /**
  *
@@ -33,7 +35,7 @@ public class PRABehaviour extends Behaviour
     private AID top;
     private MessageTemplate mt;
     private int msgtofe;
-    private LinkedList<MessageTemplate> mts = new LinkedList<MessageTemplate>();
+    private LinkedList<MessageTemplate> mts = new LinkedList<>();
     private DFAgentDescription template = new DFAgentDescription();
     private ServiceDescription sd = new ServiceDescription();
 
@@ -82,15 +84,14 @@ public class PRABehaviour extends Behaviour
             top = searchtop[0].getName();
             request.addReceiver(top);
             Object b = ((PRA_Agent) myAgent).getPrq();
-            request.setContentObject((Serializable) b);
             request.setConversationId("Request-Topology");
             request.setReplyWith("Request-Topology" + System.currentTimeMillis());
             mt = MessageTemplate.and(MessageTemplate.MatchConversationId("Request-Topology"), MessageTemplate.MatchInReplyTo(request.getReplyWith()));
             myAgent.send(request);
             Debugger.log("Message sent to request topology");
-        } catch (Exception ex)
+        } catch (FIPAException ex)
         {
-            ex.printStackTrace();
+            Logger.getLogger(PRABehaviour.class.getName()).log(Level.SEVERE, null, ex);
         }
         step++;
     }
@@ -103,20 +104,55 @@ public class PRABehaviour extends Behaviour
         {
             if (reply.getPerformative() == ACLMessage.INFORM)
             {
-                switch (reply.getContent())
+                try
                 {
-                    case "everythings fit":
+                    ProductRequest prq = ((PRA_Agent) myAgent).getPrq();
+                    topology.MainTopology mainTopology = (MainTopology) reply.getContentObject();
+                    boolean outoforder = false;
+                    for (int i = 0; i < (prq.getpList().size() - 1) / 2; i++)
+                    {
+                        if (mainTopology.getprocessList().get(i) != null)
+                        {
+                            if (!((topology.Process) prq.getpList().get(i * 2 + 1)).getName().equalsIgnoreCase(mainTopology.getprocessList().get(i).getName()))
+                            {
+                                outoforder = true;
+                            }
+                        }
+                    }
+                    if (!outoforder)
+                    {
+                        Debugger.log("everythings fit");
                         step++;
-                        Debugger.log("Order of Topology mesh. Next Step");
-                        break;
-                    case "out of order":
-                        step++;
-                        Debugger.log("Processes out of Order");
-                        break;
-                    case "process missing":
-                        step++;
-                        Debugger.log("Some Prcesses are missing");
-                        break;
+                    } else
+                    {
+                        boolean noprocessmissing = true;
+                        for (int i = 0; i < (prq.getpList().size() - 1) / 2; i++)
+                        {
+                            boolean processmissing = true;
+                            for (int j = 0; j < mainTopology.getprocessList().size(); j++)
+                            {
+
+                                if (!((topology.Process) prq.getpList().get(i * 2 + 1)).getName().equalsIgnoreCase(mainTopology.getprocessList().get(j).getName()))
+                                {
+                                    processmissing = false;
+                                    j = mainTopology.getprocessList().size();
+                                }
+                            }
+                            if (processmissing)
+                            {
+                                Debugger.log("Processes are out of order");
+                                i = (prq.getpList().size() - 1) / 2;
+                                step++;
+                            } else
+                            {
+                                Debugger.log("Some Processes are missing");
+                                step++;
+                            }
+                        }
+                    }
+                } catch (UnreadableException ex)
+                {
+                    Logger.getLogger(PRABehaviour.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         } else
@@ -168,9 +204,9 @@ public class PRABehaviour extends Behaviour
         Debugger.log("PRABehaviour Step 3");
         if (msgtofe != 0)
         {
-            topology.Process topprocess = null;
+            topology.Process topprocess;
             LinkedList list = ((PRA_Agent) myAgent).getPrq().getpList();
-            int j = 0;
+            int j;
             for (MessageTemplate mt1 : mts)
             {
                 ACLMessage replys = myAgent.receive();
@@ -192,7 +228,7 @@ public class PRABehaviour extends Behaviour
                                 Hashtable tableprod = ((topology.Product) (((PRA_Agent) myAgent).getPrq().getpList()).get(j - 1)).getProperties();
                                 Enumeration keyspro = tableprod.keys();
                                 Debugger.log("Check Product Parameter");
-                                Debugger.log("von " + topprocess.getName());
+                                Debugger.log("from " + topprocess.getName());
                                 while (keyspro.hasMoreElements())
                                 {
                                     String key = (String) keyspro.nextElement();
@@ -202,11 +238,11 @@ public class PRABehaviour extends Behaviour
                                         Debugger.log("Check key:" + key);
                                         if (!tableprod.get(key).toString().equalsIgnoreCase(tablefe.get(key).toString()))
                                         {
-                                            Debugger.log("Parameter " + key.toString() + " does not fit");
+                                            Debugger.log("Parameter " + key + " does not fit");
 
                                         } else
                                         {
-                                            Debugger.log(" Parameter " + key.toString() + " fits");
+                                            Debugger.log("Parameter " + key + " fits");
                                         }
                                     }
                                     if (tablefe.get(key + "_Max") != null)
@@ -214,11 +250,11 @@ public class PRABehaviour extends Behaviour
                                         Debugger.log("Check key: " + key + " to max Value");
                                         if (!((Integer) tableprod.get(key) <= (Integer) tablefe.get(key + "_Max")))
                                         {
-                                            Debugger.log("Parameter " + key.toString() + " does not fit");
+                                            Debugger.log("Parameter " + key + " does not fit");
 
                                         } else
                                         {
-                                            Debugger.log(" Parameter " + key.toString() + " fits");
+                                            Debugger.log("Parameter " + key + " fits");
                                         }
                                     }
                                     if (tablefe.get(key + "_Min") != null)
@@ -226,11 +262,11 @@ public class PRABehaviour extends Behaviour
                                         Debugger.log("Check key: " + key + " to min Value");
                                         if (!((Integer) tableprod.get(key) >= (Integer) tablefe.get(key + "_Min")))
                                         {
-                                            Debugger.log("Parameter " + key.toString() + " does not fit");
+                                            Debugger.log("Parameter " + key + " does not fit");
 
                                         } else
                                         {
-                                            Debugger.log(" Parameter " + key.toString() + " fits");
+                                            Debugger.log("Parameter " + key + " fits");
                                         }
                                     }
                                 }
@@ -245,11 +281,11 @@ public class PRABehaviour extends Behaviour
                                     {
                                         if (!tableproc.get(key).toString().equalsIgnoreCase(tablefe.get(key).toString()))
                                         {
-                                            Debugger.log("Parameter " + key.toString() + " does not fit");
+                                            Debugger.log("Parameter " + key + " does not fit");
 
                                         } else
                                         {
-                                            Debugger.log(" Parameter " + key.toString() + " fits");
+                                            Debugger.log("Parameter " + key + " fits");
                                         }
                                     }
                                     if (tablefe.get(key + "_Max") != null)
@@ -257,11 +293,11 @@ public class PRABehaviour extends Behaviour
                                         Debugger.log("Check key: " + key + " to max Value");
                                         if (!((Integer) tableproc.get(key) <= (Integer) tablefe.get(key + "_Max")))
                                         {
-                                            Debugger.log("Parameter " + key.toString() + " does not fit");
+                                            Debugger.log("Parameter " + key + " does not fit");
 
                                         } else
                                         {
-                                            Debugger.log(" Parameter " + key.toString() + " fits");
+                                            Debugger.log("Parameter " + key + " fits");
                                         }
                                     }
                                     if (tablefe.get(key + "_Min") != null)
@@ -269,11 +305,11 @@ public class PRABehaviour extends Behaviour
                                         Debugger.log("Check key: " + key + " to min Value");
                                         if (!((Integer) tableproc.get(key) >= (Integer) tablefe.get(key + "_Min")))
                                         {
-                                            Debugger.log("Parameter " + key.toString() + " does not fit");
+                                            Debugger.log("Parameter " + key + " does not fit");
 
                                         } else
                                         {
-                                            Debugger.log(" Parameter " + key.toString() + " fits");
+                                            Debugger.log("Parameter " + key + " fits");
                                         }
                                     }
                                 }
@@ -287,7 +323,7 @@ public class PRABehaviour extends Behaviour
 
                     msgtofe--;
                 }
-                mts.remove(mt1);
+                //mts.remove(mt1);
             }
         } else
         {

@@ -141,7 +141,7 @@ public class Main
         properties.put("Material", "Kunstoff");
         prqList.add(new topology.Product("ZwischenProdukt", properties));
         properties = new Hashtable();
-        properties.put("Geschwindigkeit", new Integer(1));
+        properties.put("Geschwindigkeit", new Integer(2));
         prqList.add(new topology.Process("lagern", properties));
         properties = new Hashtable();
         properties.put("Durchmesser", new Integer(8));

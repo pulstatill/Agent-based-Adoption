@@ -5,13 +5,14 @@
  */
 package topology;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 /**
  *
  * @author Philipp
  */
-public class MainTopology
+public class MainTopology implements Serializable
 {
     private LinkedList<Process> pList;
     

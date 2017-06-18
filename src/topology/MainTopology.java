@@ -5,6 +5,7 @@
  */
 package topology;
 
+import interfaces.ProcessInterface;
 import java.io.Serializable;
 import java.util.LinkedList;
 
@@ -12,7 +13,7 @@ import java.util.LinkedList;
  *
  * @author Philipp
  */
-public class MainTopology implements Serializable
+public class MainTopology implements Serializable, interfaces.TopologyInterface
 {
     private LinkedList<Process> pList;
     
@@ -21,14 +22,18 @@ public class MainTopology implements Serializable
         this.pList = pList;
     }
 
-    public LinkedList<Process> getprocessList()
+    @Override
+    public LinkedList<ProcessInterface> getprocessList()
     {
-        return pList;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public void setprocessList(LinkedList<Process> pList)
+    @Override
+    public void setprocessList(LinkedList<ProcessInterface> pList)
     {
-        this.pList = pList;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+   
     
 }

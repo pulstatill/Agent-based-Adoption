@@ -6,13 +6,12 @@
 package ProductRequestAnalyzer;
 
 import java.util.LinkedList;
-import topology.Process;
 
 /**
  *
  * @author Philipp
  */
-public class ProductRequest implements java.io.Serializable
+public class ProductRequest implements interfaces.ProductRequestInterface
 {
     private LinkedList pList;
 
@@ -21,11 +20,13 @@ public class ProductRequest implements java.io.Serializable
         this.pList = pList;
     }
 
+    @Override
     public LinkedList getpList()
     {
         return pList;
     }
 
+    @Override
     public void setpList(LinkedList pList)
     {
         this.pList = pList;

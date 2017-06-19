@@ -28,26 +28,36 @@ public class Main
      */
     public static void main(String[] args)
     {
-        // TODO code application logic here
+        /**
+         * * Initialisiere JADE Rutime und RMA Agent **
+         */
         jade.core.Runtime rt = jade.core.Runtime.instance();
         Debugger.log("Runtime created");
-        
+
         Profile profile = new ProfileImpl(null, 1200, null);
         Debugger.log("profile created");
         AgentContainer mainContainer = rt.createMainContainer(profile);
-        
+
         ProfileImpl pContainer = new ProfileImpl(null, 1200, null);
-        Debugger.log("Launching the agent container ..."+pContainer);
+        Debugger.log("Launching the agent container ..." + pContainer);
         AgentContainer cont = rt.createAgentContainer(pContainer);
         Debugger.log("container " + pContainer + " created");
         Debugger.log("Launching the rma agent on the main container ...");
+        
         try
         {
             AgentController rma = mainContainer.createNewAgent("rma", "jade.tools.rma.rma", new Object[0]);
+            /* Starte RMA Agent */
             rma.start();
-            Object[] args1 = {new MainTopology(initTop())};
+            /* Initialisiere Toplogy */
+            Object[] args1 =
+            {
+                new MainTopology(initTop())
+            };
             AgentController topa = cont.createNewAgent("TopologyAgent", "topology.TopologyAgent", args1);
+            /* Starte Topology Agent */
             topa.start();
+            /* Thread für 100ms auf sleep setzen damit Topology Agent Zeit hat Service zu registrieren */
             try
             {
                 Thread.sleep(100);
@@ -55,19 +65,23 @@ public class Main
             {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
-            Object[] args2 = {new ProductRequestAnalyzer.ProductRequest(initPRQ())};
+            /* Initialisiere Produkt Anfrage */
+            Object[] args2 =
+            {
+                new ProductRequestAnalyzer.ProductRequest(initPRQ())
+            };
             AgentController pra = cont.createNewAgent("PRA-Agent", "ProductRequestAnalyzer.PRA_Agent", args2);
+            /* Start PRA Agent */
             pra.start();
-        }
-        catch(StaleProxyException ex)
+        } catch (StaleProxyException ex)
         {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public static LinkedList<topology.Process> initTop()
+
+    public static LinkedList<interfaces.ProcessInterface> initTop()
     {
-        LinkedList<topology.Process> pList = new LinkedList<topology.Process>();
+        LinkedList<interfaces.ProcessInterface> pList = new LinkedList<interfaces.ProcessInterface>();
         Hashtable properties = new Hashtable();
         properties.put("Durchmesser_Max", new Integer(10));
         properties.put("Durchmesser_Min", new Integer(2));
@@ -98,6 +112,7 @@ public class Main
         pList.add(new topology.Process("lagern", properties));
         return pList;
     }
+
     public static LinkedList initPRQ()
     {
         LinkedList prqList = new LinkedList<Object>();

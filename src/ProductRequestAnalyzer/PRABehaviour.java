@@ -5,6 +5,7 @@
  */
 package ProductRequestAnalyzer;
 
+import interfaces.ProductRequestInterface;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.domain.DFService;
@@ -14,8 +15,6 @@ import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -31,11 +30,11 @@ import topology.MainTopology;
 public class PRABehaviour extends Behaviour
 {
 
-    private int step = 0;
-    private AID top;
-    private MessageTemplate mt;
-    private int msgtofe;
-    private LinkedList<MessageTemplate> mts = new LinkedList<>();
+    /* Attribute */
+    private int step = 0; // Aktueller Schritt
+    private MessageTemplate mt; // Message Template zum Empfangen der Topology 
+    private int msgtofe; // Anzahl der Narichten an FE Agenten 
+    private LinkedList<MessageTemplate> mts = new LinkedList<>(); // Alle Message Templates zum Empfangen der Narichten
     private DFAgentDescription template = new DFAgentDescription();
     private ServiceDescription sd = new ServiceDescription();
 
@@ -46,15 +45,19 @@ public class PRABehaviour extends Behaviour
         switch (step)
         {
             case 0:
+                /* Sende Naricht an Topology Agent und erfrage Topology */
                 step0();
                 break;
             case 1:
+                /* Empfange Naricht von Topology Agent und überprüfe auf Erfüllbarkeit */
                 step1();
                 break;
             case 2:
+                /* Frage von allen FE Agenten die Prozess Attribute an */
                 step2();
                 break;
             case 3:
+                /* Empfange Antworten der FE Agenten */
                 step3();
                 break;
             case 4:
@@ -73,20 +76,23 @@ public class PRABehaviour extends Behaviour
     private void step0()
     {
         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
-
+        AID top;
         Debugger.log("PRABehaviour Step 0");
         sd.setType("Topology");
         sd.setName("Factory-Topology");
         template.addServices(sd);
         try
         {
+            /* Suche nach Topology Agenten. Momentan wird davon ausgegangen, dass nur einer existiert*/
             DFAgentDescription[] searchtop = DFService.search(myAgent, template);
             top = searchtop[0].getName();
             request.addReceiver(top);
-            Object b = ((PRA_Agent) myAgent).getPrq();
             request.setConversationId("Request-Topology");
+            /* System.currenTime Millis für eine eindeutige indentifizierbarkeit */
             request.setReplyWith("Request-Topology" + System.currentTimeMillis());
-            mt = MessageTemplate.and(MessageTemplate.MatchConversationId("Request-Topology"), MessageTemplate.MatchInReplyTo(request.getReplyWith()));
+            /* Sichere Template zum späteren Empfangen */
+            mt = MessageTemplate.and(MessageTemplate.MatchConversationId(request.getConversationId()), MessageTemplate.MatchInReplyTo(request.getReplyWith()));
+            /* Sende Naricht an Topology Agent */
             myAgent.send(request);
             Debugger.log("Message sent to request topology");
         } catch (FIPAException ex)
@@ -99,6 +105,7 @@ public class PRABehaviour extends Behaviour
     private void step1()
     {
         Debugger.log("PRABehaviour Step 1");
+        /* Empfange Antwort von Toplogy Agent */
         ACLMessage reply = myAgent.receive(mt);
         if (reply != null)
         {
@@ -106,15 +113,21 @@ public class PRABehaviour extends Behaviour
             {
                 try
                 {
-                    ProductRequest prq = ((PRA_Agent) myAgent).getPrq();
+                    /* Produkt Anfrage von PRA Agent laden */
+                    ProductRequestInterface prq = ((PRA_Agent) myAgent).getPrq();
+                    /* Toplogy aus Antwort Naricht von Toplogy Agent laden */
                     topology.MainTopology mainTopology = (MainTopology) reply.getContentObject();
+                    /* Prüfen ob alle Prozesse vorhande und an der richtigen Stelle sind */
                     boolean outoforder = false;
+                    /* Nur jedes zweite Element, in der Produktanfrage ist ein Prozess */
                     for (int i = 0; i < (prq.getpList().size() - 1) / 2; i++)
                     {
                         if (mainTopology.getprocessList().get(i) != null)
                         {
+                            /* Prüfe ob Prozessname übereinstimmen */
                             if (!((topology.Process) prq.getpList().get(i * 2 + 1)).getName().equalsIgnoreCase(mainTopology.getprocessList().get(i).getName()))
                             {
+                                /* Prozesse nicht in der richtigen Reihenfolge oder, ein oder mehrere Prozesse, nicht vorhanden */
                                 outoforder = true;
                             }
                         }
@@ -125,6 +138,7 @@ public class PRABehaviour extends Behaviour
                         step++;
                     } else
                     {
+                        /* Prüfen ob Prozesse nicht vorhanden oder nicht in der korrekten Reihenfolge */
                         boolean noprocessmissing = true;
                         for (int i = 0; i < (prq.getpList().size() - 1) / 2; i++)
                         {
@@ -157,6 +171,7 @@ public class PRABehaviour extends Behaviour
             }
         } else
         {
+            /* Falls keine Naricht empfangen wurden, Behaviour blockieren, bis neue Narichten empfagen wurden */
             block();
         }
     }
@@ -166,7 +181,7 @@ public class PRABehaviour extends Behaviour
         Debugger.log("PRABehaviour Step 2");
         LinkedList plist = ((PRA_Agent) myAgent).getPrq().getpList();
         AID processname;
-
+        /* Nur jedes zweite Element in der Liste ist ein Prozess */
         for (int i = 0; i < plist.size() - 1; i += 2)
         {
             template.removeServices(sd);
@@ -178,6 +193,7 @@ public class PRABehaviour extends Behaviour
                 DFAgentDescription[] searchfe = DFService.search(myAgent, template);
                 if (searchfe != null)
                 {
+                    /* Frage alle FE-Agenten an, die den Prozess ausfürhen können */
                     for (DFAgentDescription searchfe1 : searchfe)
                     {
                         processname = searchfe1.getName();
@@ -188,6 +204,7 @@ public class PRABehaviour extends Behaviour
                         mts.add(MessageTemplate.and(MessageTemplate.MatchConversationId(requestfe.getConversationId()), MessageTemplate.MatchInReplyTo(requestfe.getReplyWith())));
                         myAgent.send(requestfe);
                         Debugger.log("Message sent to request Process properties of:" + processname.getName());
+                        /* Erhöhe Counter zum Zählen der Anfragen um eins */
                         msgtofe++;
                     }
                 }

@@ -5,6 +5,7 @@
  */
 package ProductRequestAnalyzer;
 
+import interfaces.ProductRequestInterface;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -21,7 +22,7 @@ import topology.TopologyAgent;
  */
 public class PRA_Agent extends Agent
 {
-    private ProductRequest prq;
+    private ProductRequestInterface prq;
     
     @Override
     protected void setup()
@@ -31,7 +32,7 @@ public class PRA_Agent extends Agent
         Object[] args = getArguments();
         if(args!= null && args.length > 0)
         {
-            prq = (ProductRequest) args[0];
+            prq = (ProductRequestInterface) args[0];
             Debugger.log("Product Request found");
         }
         
@@ -64,7 +65,7 @@ public class PRA_Agent extends Agent
         Debugger.log("PRA_Agent " + getAID().getName() + " terminating");
     }
 
-    public ProductRequest getPrq()
+    public ProductRequestInterface getPrq()
     {
         return prq;
     }

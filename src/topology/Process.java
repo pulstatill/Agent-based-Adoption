@@ -22,21 +22,25 @@ public class Process implements java.io.Serializable, interfaces.ProcessInterfac
         this.properties = properties;
     }
 
+    @Override
     public String getName()
     {
         return name;
     }
 
+    @Override
     public void setName(String name)
     {
         this.name = name;
     }
 
+    @Override
     public Hashtable getProperties()
     {
         return properties;
     }
 
+    @Override
     public void setProperties(Hashtable properties)
     {
         this.properties = properties;

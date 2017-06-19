@@ -5,16 +5,14 @@
  */
 package interfaces;
 
-import java.util.Hashtable;
+import java.util.LinkedList;
 
 /**
  *
  * @author Philipp
  */
-public interface ProductInterface
+public interface ProductRequestInterface
 {
-    public String getName();
-    public void setName(String name);
-    public Hashtable getProperties();
-    public void setProperties(Hashtable properties);
+    public LinkedList getpList();
+    public void setpList(LinkedList pList);
 }

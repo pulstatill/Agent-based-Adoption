@@ -21,7 +21,7 @@ import topology.TopologyAgent;
  */
 public class FEAgent extends Agent
 {
-    private topology.Process process;
+    private interfaces.ProcessInterface process;
     @Override
     protected void setup()
     {
@@ -29,7 +29,7 @@ public class FEAgent extends Agent
          Object[] args = getArguments();
          if(args != null && args.length > 0)
          {
-             process = (topology.Process) args[0];
+             process = (interfaces.ProcessInterface) args[0];
              Debugger.log("Process found: " + process.getName() + "  " + getAID().getName());
          }
          else
@@ -60,7 +60,7 @@ public class FEAgent extends Agent
         Debugger.log("FEAgent: " + getAID().getName() + " terminating");
     }
 
-    public topology.Process getProcess()
+    public interfaces.ProcessInterface getProcess()
     {
         return process;
     }

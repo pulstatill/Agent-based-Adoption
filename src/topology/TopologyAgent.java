@@ -5,6 +5,7 @@
  */
 package topology;
 
+import interfaces.TopologyInterface;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -12,7 +13,6 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
-import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.Debugger;
@@ -24,7 +24,7 @@ import main.Debugger;
 public class TopologyAgent extends Agent
 {
 
-    private MainTopology mainTopology;
+    private TopologyInterface topologyref;
 
     @Override
     protected void setup()
@@ -33,11 +33,11 @@ public class TopologyAgent extends Agent
         Object[] args = getArguments();
         if (args != null && args.length > 0)
         {
-            mainTopology = (MainTopology) args[0];
+            topologyref = (TopologyInterface) args[0];
             Debugger.log("Topolgy found");
-            if (mainTopology.getprocessList() != null)
+            if (topologyref.getprocessList() != null)
             {
-                mainTopology.getprocessList().forEach((processList) ->
+                topologyref.getprocessList().forEach((processList) ->
                 {
                     try
                     {
@@ -84,8 +84,8 @@ public class TopologyAgent extends Agent
         Debugger.log("TopologyAgent " + getAID().getName() +" terminating");
     }
 
-    public MainTopology getMainTopology()
+    public TopologyInterface getMainTopology()
     {
-        return mainTopology;
+        return topologyref;
     }
 }

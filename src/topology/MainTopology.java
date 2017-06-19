@@ -15,9 +15,10 @@ import java.util.LinkedList;
  */
 public class MainTopology implements Serializable, interfaces.TopologyInterface
 {
+
     private LinkedList<ProcessInterface> pList;
-    
-    public MainTopology (LinkedList<ProcessInterface> pList)
+
+    public MainTopology(LinkedList<ProcessInterface> pList)
     {
         this.pList = pList;
     }
@@ -34,6 +35,4 @@ public class MainTopology implements Serializable, interfaces.TopologyInterface
         this.pList = pList;
     }
 
-   
-    
 }

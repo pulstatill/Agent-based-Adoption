@@ -13,6 +13,7 @@ import java.util.LinkedList;
  */
 public class ProductRequest implements interfaces.ProductRequestInterface
 {
+
     private LinkedList pList;
 
     public ProductRequest(LinkedList pList)
@@ -31,6 +32,5 @@ public class ProductRequest implements interfaces.ProductRequestInterface
     {
         this.pList = pList;
     }
-    
-    
+
 }

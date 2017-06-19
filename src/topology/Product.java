@@ -13,6 +13,7 @@ import java.util.Hashtable;
  */
 public class Product implements java.io.Serializable, interfaces.ProductInterface
 {
+
     private String name;
     private Hashtable properties;
 
@@ -45,5 +46,5 @@ public class Product implements java.io.Serializable, interfaces.ProductInterfac
     {
         this.properties = properties;
     }
-    
+
 }

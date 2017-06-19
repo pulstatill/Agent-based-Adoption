@@ -289,7 +289,7 @@ public class PRABehaviour extends Behaviour
                                 }
                                 Hashtable tableproc = ((topology.Process) (((PRA_Agent) myAgent).getPrq().getpList()).get(j)).getProperties();
                                 keyspro = tableproc.keys();
-                                Debugger.log("Prüfe Process Parameter");
+                                Debugger.log("Check Process Parameter");
                                 while (keyspro.hasMoreElements())
                                 {
                                     String key = (String) keyspro.nextElement();

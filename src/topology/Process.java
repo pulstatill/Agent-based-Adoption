@@ -13,6 +13,7 @@ import java.util.Hashtable;
  */
 public class Process implements java.io.Serializable, interfaces.ProcessInterface
 {
+
     private String name;
     private Hashtable properties;
 
@@ -45,5 +46,5 @@ public class Process implements java.io.Serializable, interfaces.ProcessInterfac
     {
         this.properties = properties;
     }
-    
+
 }

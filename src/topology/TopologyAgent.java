@@ -81,7 +81,7 @@ public class TopologyAgent extends Agent
     @Override
     protected void takeDown()
     {
-        Debugger.log("TopologyAgent " + getAID().getName() +" terminating");
+        Debugger.log("TopologyAgent " + getAID().getName() + " terminating");
     }
 
     public TopologyInterface getMainTopology()

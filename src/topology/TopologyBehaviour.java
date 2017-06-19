@@ -38,7 +38,7 @@ public class TopologyBehaviour extends Behaviour
                     {
                         ACLMessage reply = msg.createReply();
                         reply.setPerformative(ACLMessage.INFORM);
-                        Object a = ((TopologyAgent)myAgent).getMainTopology();
+                        Object a = ((TopologyAgent) myAgent).getMainTopology();
                         reply.setContentObject((Serializable) a);
                         //reply.setContent("Topology");
                         myAgent.send(reply);

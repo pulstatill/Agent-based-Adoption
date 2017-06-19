@@ -22,21 +22,20 @@ import topology.TopologyAgent;
  */
 public class PRA_Agent extends Agent
 {
+
     private ProductRequestInterface prq;
-    
+
     @Override
     protected void setup()
     {
         Debugger.log("Hello! PRA_Agent " + getAID().getName() + " is ready");
-        
+
         Object[] args = getArguments();
-        if(args!= null && args.length > 0)
+        if (args != null && args.length > 0)
         {
             prq = (ProductRequestInterface) args[0];
             Debugger.log("Product Request found");
-        }
-        
-        else
+        } else
         {
             Debugger.log("No ProductRequest found.");
             doDelete();
@@ -58,7 +57,7 @@ public class PRA_Agent extends Agent
         addBehaviour(new PRABehaviour());
         Debugger.log("PRABehaviour added");
     }
-    
+
     @Override
     protected void takeDown()
     {

@@ -21,7 +21,6 @@ public class TopologyBehaviour extends Behaviour
 {
 
     private int step = 0;
-    private MainTopology mainTopology;
 
     @Override
     public void action()

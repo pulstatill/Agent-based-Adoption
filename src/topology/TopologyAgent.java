@@ -5,6 +5,7 @@
  */
 package topology;
 
+import interfaces.ProcessInterface;
 import interfaces.TopologyInterface;
 import jade.core.Agent;
 import jade.domain.DFService;
@@ -13,6 +14,7 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.Debugger;
@@ -25,6 +27,8 @@ public class TopologyAgent extends Agent
 {
 
     private TopologyInterface topologyref;
+    private LinkedList<ProcessInterface> pList;
+    private LinkedList<String> pNameList;
 
     @Override
     protected void setup()
@@ -33,11 +37,12 @@ public class TopologyAgent extends Agent
         Object[] args = getArguments();
         if (args != null && args.length > 0)
         {
-            topologyref = (TopologyInterface) args[0];
+            pList = (LinkedList<ProcessInterface>)args[0];
+            topologyref = (TopologyInterface) args[1];
             Debugger.log("Topolgy found");
-            if (topologyref.getprocessList() != null)
+            if (pList != null)
             {
-                topologyref.getprocessList().forEach((processList) ->
+                pList.forEach((processList) ->
                 {
                     try
                     {
@@ -45,21 +50,21 @@ public class TopologyAgent extends Agent
                         {
                             processList
                         };
-                        AgentController feAgent = getContainerController().createNewAgent("FE-Agent " + processList.getName(), "functionalentity.FEAgent", arg);
+                        AgentController feAgent = getContainerController().createNewAgent("FE-Agent " + processList.getFullName(), "functionalentity.FEAgent", arg);
                         feAgent.start();
-                        Debugger.log("FE-Agent for Process " + processList.getName() + " initialized");
+                        Debugger.log("FE-Agent for Process " + processList + " initialized");
                     } catch (StaleProxyException ex)
                     {
                         Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 });
             }
-
         } else
         {
-            Debugger.log("No Toplogy found");
+            Debugger.log("No Processes are found");
             doDelete();
         }
+        
 
         try
         {

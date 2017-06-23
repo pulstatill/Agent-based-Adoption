@@ -5,6 +5,7 @@
  */
 package main;
 
+import interfaces.ProcessInterface;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
@@ -12,6 +13,7 @@ import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import topology.MainTopology;
@@ -43,16 +45,23 @@ public class Main
         AgentContainer cont = rt.createAgentContainer(pContainer);
         Debugger.log("container " + pContainer + " created");
         Debugger.log("Launching the rma agent on the main container ...");
-        
+
         try
         {
             AgentController rma = mainContainer.createNewAgent("rma", "jade.tools.rma.rma", new Object[0]);
             /* Starte RMA Agent */
             rma.start();
             /* Initialisiere Toplogy */
+            LinkedList<interfaces.ProcessInterface> pList = initTop();
+            LinkedList<String> pListName = new LinkedList<String>();
+            pList.forEach((process) ->
+            {
+                pListName.addLast(process.getFullName());
+            });
             Object[] args1 =
             {
-                new MainTopology(initTop())
+                pList,
+                new MainTopology(pListName)
             };
             AgentController topa = cont.createNewAgent("TopologyAgent", "topology.TopologyAgent", args1);
             /* Starte Topology Agent */
@@ -88,28 +97,28 @@ public class Main
         properties.put("Höhe_Max", new Integer(5));
         properties.put("Gewicht_Max", new Integer(5));
         properties.put("Geschwindigkeit", new Integer(2));
-        pList.add(new topology.Process("verteilen", properties));
+        pList.add(new topology.Process("verteilen" + UUID.randomUUID().toString(), properties));
         properties = new Hashtable();
         properties.put("Durchmesser_Max", new Integer(10));
         properties.put("Höhe_Min", new Integer(2));
         properties.put("Höhe_Max", new Integer(5));
         properties.put("Gewicht_Max", new Integer(5));
         properties.put("Geschwindigkeit", new Integer(2));
-        pList.add(new topology.Process("prüfe und transport", properties));
+        pList.add(new topology.Process("prüfe und transport" + UUID.randomUUID().toString(), properties));
         properties = new Hashtable();
         properties.put("Durchmesser_Max", new Integer(10));
         properties.put("Höhe_Max", new Integer(5));
         properties.put("Bohrdurchmesser", new Integer(1));
         properties.put("Geschwindigeit", new Integer(2));
         properties.put("Bohrtiefe", new Integer(2));
-        pList.add(new topology.Process("bearbeiten", properties));
+        pList.add(new topology.Process("bearbeiten" + UUID.randomUUID().toString(), properties));
         properties = new Hashtable();
         properties.put("Durchmesser_Max", new Integer(10));
         properties.put("Durchmesser_Min", new Integer(2));
         properties.put("Höhe_Max", new Integer(5));
         properties.put("Gewicht_Max", new Integer(5));
         properties.put("Geschwindigkeit", new Integer(2));
-        pList.add(new topology.Process("lagern", properties));
+        pList.add(new topology.Process("lagern" + UUID.randomUUID().toString(), properties));
         return pList;
     }
 

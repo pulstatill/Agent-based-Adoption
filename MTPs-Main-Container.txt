@@ -1,1 +1,1 @@
-http://billis-imac.fritz.box:7778/acc
+http://philipps-imac.fritz.box:7778/acc

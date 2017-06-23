@@ -17,5 +17,6 @@ public interface ProcessInterface
     public void setName(String name);
     public Hashtable getProperties();
     public void setProperties(Hashtable properties);
+    public String getFullName();
             
 }

@@ -22,7 +22,7 @@ import topology.TopologyAgent;
 public class FEAgent extends Agent
 {
 
-    private interfaces.ProcessInterface process;
+    private interfaces.ProcessInterface[] process;
 
     @Override
     protected void setup()
@@ -31,28 +31,34 @@ public class FEAgent extends Agent
         Object[] args = getArguments();
         if (args != null && args.length > 0)
         {
-            process = (interfaces.ProcessInterface) args[0];
-            Debugger.log("Process found: " + process.getName() + "  " + getAID().getName());
+            process = new interfaces.ProcessInterface[args.length];
+            for (int i = 0; i < args.length; i++)
+            {
+                Object arg = args[i];
+                process[i] = (interfaces.ProcessInterface) arg;
+                Debugger.log("Process found: " + process[i].getName() + " added to FEAgent: " + getAID().getName());
+                try
+                {
+                    DFAgentDescription dfd = new DFAgentDescription();
+                    dfd.setName(getAID());
+                    ServiceDescription sd = new ServiceDescription();
+                    sd.setType("Process");
+                    sd.setName(process[i].getName());
+                    dfd.addServices(sd);
+                    DFService.register(this, dfd);
+                    Debugger.log("DFService: " + sd.getName() + " registered");
+                } catch (FIPAException fe)
+                {
+                    Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, fe);
+                }
+                addBehaviour(new FEBehaviour());
+            }
         } else
         {
-            Debugger.log("No Process was found: " + getAID().getName());
+            Debugger.log("No Processes was found: " + getAID().getName());
             doDelete();
         }
-        try
-        {
-            DFAgentDescription dfd = new DFAgentDescription();
-            dfd.setName(getAID());
-            ServiceDescription sd = new ServiceDescription();
-            sd.setType("Process");
-            sd.setName(process.getName());
-            dfd.addServices(sd);
-            DFService.register(this, dfd);
-            Debugger.log("DFService: " + sd.getName() + " registered");
-        } catch (FIPAException fe)
-        {
-            Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, fe);
-        }
-        addBehaviour(new FEBehaviour());
+
     }
 
     @Override
@@ -61,7 +67,7 @@ public class FEAgent extends Agent
         Debugger.log("FEAgent: " + getAID().getName() + " terminating");
     }
 
-    public interfaces.ProcessInterface getProcess()
+    public interfaces.ProcessInterface[] getProcesses()
     {
         return process;
     }

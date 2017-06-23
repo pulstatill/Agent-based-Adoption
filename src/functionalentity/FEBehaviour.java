@@ -29,25 +29,28 @@ public class FEBehaviour extends Behaviour
         switch (step)
         {
             case 0:
-                Debugger.log("FEBehaviour Step 0 " + ((FEAgent) myAgent).getProcess().getName());
+                Debugger.log("FEBehaviour Step 0 " + ((FEAgent) myAgent).getName());
                 MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
                 ACLMessage msg = myAgent.receive(mt);
                 if (msg != null)
                 {
-
-                    try
+                    for (int i = 0; i < ((FEAgent) myAgent).getProcesses().length; i++)
                     {
-                        ACLMessage reply = msg.createReply();
-                        reply.setPerformative(ACLMessage.INFORM);
-                        Object a = ((FEAgent) myAgent).getProcess();
-                        reply.setContentObject((Serializable) a);
-                        //reply.setContent(((FEAgent) myAgent).getProcess().getName());
-                        Debugger.log("Message sent to PRA " + ((FEAgent) myAgent).getProcess().getName());
-                        step++;
-                        myAgent.send(reply);
-                    } catch (IOException ex)
-                    {
-                        Logger.getLogger(FEBehaviour.class.getName()).log(Level.SEVERE, null, ex);
+                        if (msg.getContent().equalsIgnoreCase(((FEAgent) myAgent).getProcesses()[i].getName()))
+                        {
+                            try
+                            {
+                                ACLMessage reply = msg.createReply();
+                                reply.setPerformative(ACLMessage.INFORM);
+                                Object a = ((FEAgent) myAgent).getProcesses();
+                                reply.setContentObject((Serializable) a);
+                                Debugger.log("Message sent to PRA " + ((FEAgent) myAgent).getName());;
+                                myAgent.send(reply);
+                            } catch (IOException ex)
+                            {
+                                Logger.getLogger(FEBehaviour.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
                     }
 
                 } else

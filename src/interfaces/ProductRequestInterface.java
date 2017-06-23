@@ -13,6 +13,6 @@ import java.util.LinkedList;
  */
 public interface ProductRequestInterface
 {
-    public LinkedList getpList();
-    public void setpList(LinkedList pList);
+    public LinkedList<Object> getpList();
+    public void setpList(LinkedList<Object> pList);
 }

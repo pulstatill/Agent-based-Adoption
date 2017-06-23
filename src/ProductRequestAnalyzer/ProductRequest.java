@@ -14,9 +14,9 @@ import java.util.LinkedList;
 public class ProductRequest implements interfaces.ProductRequestInterface
 {
 
-    private LinkedList pList;
+    private LinkedList<Object> pList;
 
-    public ProductRequest(LinkedList pList)
+    public ProductRequest(LinkedList<Object> pList)
     {
         this.pList = pList;
     }
@@ -28,7 +28,7 @@ public class ProductRequest implements interfaces.ProductRequestInterface
     }
 
     @Override
-    public void setpList(LinkedList pList)
+    public void setpList(LinkedList<Object> pList)
     {
         this.pList = pList;
     }

@@ -116,7 +116,7 @@ public class PRABehaviour extends Behaviour
                     /* Produkt Anfrage von PRA Agent laden */
                     ProductRequestInterface prq = ((PRA_Agent) myAgent).getPrq();
                     /* Toplogy aus Antwort Naricht von Toplogy Agent laden */
-                    topology.MainTopology mainTopology = (MainTopology) reply.getContentObject();
+                    interfaces.TopologyInterface mainTopology = (MainTopology) reply.getContentObject();
                     /* Prüfen ob alle Prozesse vorhande und an der richtigen Stelle sind */
                     boolean outoforder = false;
                     /* Nur jedes zweite Element, in der Produktanfrage ist ein Prozess */
@@ -125,7 +125,7 @@ public class PRABehaviour extends Behaviour
                         if (mainTopology.getprocessList().get(i) != null)
                         {
                             /* Prüfe ob Prozessname übereinstimmen */
-                            if (!((topology.Process) prq.getpList().get(i * 2 + 1)).getName().equalsIgnoreCase(mainTopology.getprocessList().get(i).getName()))
+                            if (!((topology.Process) prq.getpList().get(i * 2 + 1)).getFullName().equalsIgnoreCase(mainTopology.getFullNames().get(i)))
                             {
                                 /* Prozesse nicht in der richtigen Reihenfolge oder, ein oder mehrere Prozesse, nicht vorhanden */
                                 outoforder = true;
@@ -135,7 +135,6 @@ public class PRABehaviour extends Behaviour
                     if (!outoforder)
                     {
                         Debugger.log("everythings fit");
-                        step++;
                     } else
                     {
                         /* Prüfen ob Prozesse nicht vorhanden oder nicht in der korrekten Reihenfolge */
@@ -146,7 +145,7 @@ public class PRABehaviour extends Behaviour
                             for (int j = 0; j < mainTopology.getprocessList().size(); j++)
                             {
 
-                                if (!((topology.Process) prq.getpList().get(i * 2 + 1)).getName().equalsIgnoreCase(mainTopology.getprocessList().get(j).getName()))
+                                if (!((topology.Process) prq.getpList().get(i * 2 + 1)).getFullName().equalsIgnoreCase(mainTopology.getprocessList().get(j)))
                                 {
                                     processmissing = false;
                                     j = mainTopology.getprocessList().size();
@@ -156,11 +155,9 @@ public class PRABehaviour extends Behaviour
                             {
                                 Debugger.log("Processes are out of order");
                                 i = (prq.getpList().size() - 1) / 2;
-                                step++;
                             } else
                             {
-                                Debugger.log("Some Processes are missing");
-                                step++;
+                                Debugger.log("Process" + ((interfaces.ProcessInterface)prq.getpList().get(i*2+1)).getFullName() + " is missing");
                             }
                         }
                     }

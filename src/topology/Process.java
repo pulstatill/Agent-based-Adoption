@@ -26,7 +26,7 @@ public class Process implements java.io.Serializable, interfaces.ProcessInterfac
     @Override
     public String getName()
     {
-        return name;
+        return name.substring(0, name.length()-36);
     }
 
     @Override
@@ -45,6 +45,12 @@ public class Process implements java.io.Serializable, interfaces.ProcessInterfac
     public void setProperties(Hashtable properties)
     {
         this.properties = properties;
+    }
+
+    @Override
+    public String getFullName()
+    {
+        return name;
     }
 
 }

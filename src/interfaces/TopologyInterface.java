@@ -13,7 +13,8 @@ import java.util.LinkedList;
  */
 public interface TopologyInterface
 {
-    public LinkedList<interfaces.ProcessInterface> getprocessList();
-    public void setprocessList(LinkedList<interfaces.ProcessInterface> pList);
+    public LinkedList<String> getprocessList();
+    public void setprocessList(LinkedList<String> pList);
+    public LinkedList<String> getFullNames();
     
 }

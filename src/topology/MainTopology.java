@@ -16,23 +16,36 @@ import java.util.LinkedList;
 public class MainTopology implements Serializable, interfaces.TopologyInterface
 {
 
-    private LinkedList<ProcessInterface> pList;
+    private LinkedList<String> pList = new LinkedList<>();
+    private LinkedList<String> pListFull;
 
-    public MainTopology(LinkedList<ProcessInterface> pList)
+    public MainTopology(LinkedList<String> old)
     {
-        this.pList = pList;
+        for(int i = 0; i < old.size(); i++)
+        {
+            this.pList.addLast(old.get(i));
+        }
+        this.pList = old;
     }
 
     @Override
-    public LinkedList<ProcessInterface> getprocessList()
+    public LinkedList<String> getprocessList()
     {
         return this.pList;
     }
 
     @Override
-    public void setprocessList(LinkedList<ProcessInterface> pList)
+    public void setprocessList(LinkedList<String> pList)
     {
         this.pList = pList;
     }
+
+    @Override
+    public LinkedList<String> getFullNames()
+    {
+        return pListFull;
+    }
+
+
 
 }

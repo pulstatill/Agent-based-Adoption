@@ -5,6 +5,7 @@
  */
 package ProductRequestAnalyzer;
 
+import interfaces.ProcessInterface;
 import interfaces.ProductRequestInterface;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
@@ -18,10 +19,11 @@ import jade.lang.acl.UnreadableException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.Debugger;
-import topology.MainTopology;
+import references.TopologyReference;
 
 /**
  *
@@ -116,7 +118,7 @@ public class PRABehaviour extends Behaviour
                     /* Produkt Anfrage von PRA Agent laden */
                     ProductRequestInterface prq = ((PRA_Agent) myAgent).getPrq();
                     /* Toplogy aus Antwort Naricht von Toplogy Agent laden */
-                    interfaces.TopologyInterface mainTopology = (MainTopology) reply.getContentObject();
+                    interfaces.TopologyInterface mainTopology = (TopologyReference) reply.getContentObject();
                     /* Prüfen ob alle Prozesse vorhande und an der richtigen Stelle sind */
                     boolean outoforder = false;
                     /* Nur jedes zweite Element, in der Produktanfrage ist ein Prozess */
@@ -125,7 +127,7 @@ public class PRABehaviour extends Behaviour
                         if (mainTopology.getprocessList().get(i) != null)
                         {
                             /* Prüfe ob Prozessname übereinstimmen */
-                            if (!((topology.Process) prq.getpList().get(i * 2 + 1)).getFullName().equalsIgnoreCase(mainTopology.getFullNames().get(i)))
+                            if (!((references.ProcessRefercence) prq.getpList().get(i * 2 + 1)).getFullName().equalsIgnoreCase(mainTopology.getFullNames().get(i)))
                             {
                                 /* Prozesse nicht in der richtigen Reihenfolge oder, ein oder mehrere Prozesse, nicht vorhanden */
                                 outoforder = true;
@@ -145,7 +147,7 @@ public class PRABehaviour extends Behaviour
                             for (int j = 0; j < mainTopology.getprocessList().size(); j++)
                             {
 
-                                if (!((topology.Process) prq.getpList().get(i * 2 + 1)).getFullName().equalsIgnoreCase(mainTopology.getprocessList().get(j)))
+                                if (!((references.ProcessRefercence) prq.getpList().get(i * 2 + 1)).getFullName().equalsIgnoreCase(mainTopology.getprocessList().get(j)))
                                 {
                                     processmissing = false;
                                     j = mainTopology.getprocessList().size();
@@ -157,7 +159,7 @@ public class PRABehaviour extends Behaviour
                                 i = (prq.getpList().size() - 1) / 2;
                             } else
                             {
-                                Debugger.log("Process" + ((interfaces.ProcessInterface)prq.getpList().get(i*2+1)).getFullName() + " is missing");
+                                Debugger.log("Process" + ((interfaces.ProcessInterface) prq.getpList().get(i * 2 + 1)).getFullName() + " is missing");
                             }
                         }
                     }
@@ -183,7 +185,7 @@ public class PRABehaviour extends Behaviour
         {
             template.removeServices(sd);
             sd.setType("Process");
-            sd.setName(((topology.Process) plist.get(i + 1)).getName());
+            sd.setName(((references.ProcessRefercence) plist.get(i + 1)).getName());
             template.addServices(sd);
             try
             {
@@ -218,7 +220,7 @@ public class PRABehaviour extends Behaviour
         Debugger.log("PRABehaviour Step 3");
         if (msgtofe != 0)
         {
-            topology.Process topprocess;
+            references.ProcessRefercence topprocess;
             LinkedList list = ((PRA_Agent) myAgent).getPrq().getpList();
             int j;
             for (MessageTemplate mt1 : mts)
@@ -232,14 +234,14 @@ public class PRABehaviour extends Behaviour
 
                         try
                         {
-                            topprocess = (topology.Process) replys.getContentObject();
-                            if (((topology.Process) list.get(i * 2 + 1)).getName().equalsIgnoreCase(topprocess.getName()))
+                            topprocess = (references.ProcessRefercence) replys.getContentObject();
+                            if (((references.ProcessRefercence) list.get(i * 2 + 1)).getName().equalsIgnoreCase(topprocess.getName()))
                             {
                                 j = i * 2 + 1;
                                 i = list.size();
 
                                 Hashtable tablefe = topprocess.getProperties();
-                                Hashtable tableprod = ((topology.Product) (((PRA_Agent) myAgent).getPrq().getpList()).get(j - 1)).getProperties();
+                                Hashtable tableprod = ((references.ProductReference) (((PRA_Agent) myAgent).getPrq().getpList()).get(j - 1)).getProperties();
                                 Enumeration keyspro = tableprod.keys();
                                 Debugger.log("Check Product Parameter");
                                 Debugger.log("from " + topprocess.getName());
@@ -284,7 +286,7 @@ public class PRABehaviour extends Behaviour
                                         }
                                     }
                                 }
-                                Hashtable tableproc = ((topology.Process) (((PRA_Agent) myAgent).getPrq().getpList()).get(j)).getProperties();
+                                Hashtable tableproc = ((references.ProcessRefercence) (((PRA_Agent) myAgent).getPrq().getpList()).get(j)).getProperties();
                                 keyspro = tableproc.keys();
                                 Debugger.log("Check Process Parameter");
                                 while (keyspro.hasMoreElements())
@@ -342,6 +344,75 @@ public class PRABehaviour extends Behaviour
         } else
         {
             step++;
+        }
+    }
+
+    private void step12()
+    {
+        Debugger.log("PRABehaviour Step 1");
+        /* Empfange Antwort von Toplogy Agent */
+        ACLMessage reply = myAgent.receive(mt);
+        if (reply != null)
+        {
+            if (reply.getPerformative() == ACLMessage.INFORM)
+            {
+                try
+                {
+                    LinkedList<ProcessInterface> missingprocesses = new LinkedList<>();
+                    /* Produkt Anfrage von PRA Agent laden */
+                    ProductRequestInterface prq = ((PRA_Agent) myAgent).getPrq();
+                    /* Toplogy aus Antwort Naricht von Toplogy Agent laden */
+                    interfaces.TopologyInterface mainTopology = (TopologyReference) reply.getContentObject();
+                    /* Prüfen ob alle Prozesse vorhande und an der richtigen Stelle sind */
+                    boolean outoforderormissing = false, processfound = false;
+                    /* Nur jedes zweite Element, in der Produktanfrage ist ein Prozess */
+                    int k = 0;
+                    for (int i = 0; i < (prq.getpList().size() - 1) / 2; i++)
+                    {
+                        for (int j = k; j < mainTopology.getprocessList().size(); j++)
+                        {
+                            if (((ProcessInterface) (prq.getpList().get(i * 2 + 1))).getName().equalsIgnoreCase(mainTopology.getprocessList().get(j)))
+                            {
+                                k = j + 1;
+                                break;
+                            } else if (j == (mainTopology.getprocessList().size() - 1))
+                            {
+                                outoforderormissing = true;
+                                missingprocesses.add((ProcessInterface) prq.getpList().get(i * 2 + 1));
+                            }
+                        }
+                    }
+                    if (outoforderormissing != true)
+                    {
+                        Debugger.log("Topology fits to the Poduct Request");
+                    } else
+                    {
+                        for (ProcessInterface missingprocesse : missingprocesses)
+                        {
+                            for (String processList : mainTopology.getprocessList())
+                            {
+                                if(missingprocesse.getName().equalsIgnoreCase(processList))
+                                {
+                                    processfound = true;
+                                    Debugger.log("Process: " + missingprocesse.getName() + " is not in order");
+                                    break;
+                                }
+                            }
+                            if(!processfound)
+                            {
+                                Debugger.log("Process: " + missingprocesse.getName() + " could not be found in topology");
+                            }
+                        }
+                    }
+                } catch (UnreadableException ex)
+                {
+                    Logger.getLogger(PRABehaviour.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else
+            {
+                /* Falls keine Naricht empfangen wurden, Behaviour blockieren, bis neue Narichten empfagen wurden */
+                block();
+            }
         }
     }
 }

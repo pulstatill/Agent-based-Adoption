@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package topology;
+package references;
 
 import java.util.Hashtable;
 
@@ -11,13 +11,13 @@ import java.util.Hashtable;
  *
  * @author Philipp
  */
-public class Process implements java.io.Serializable, interfaces.ProcessInterface
+public class ProductReference implements java.io.Serializable, interfaces.ProductInterface
 {
 
     private String name;
     private Hashtable properties;
 
-    public Process(String name, Hashtable properties)
+    public ProductReference(String name, Hashtable properties)
     {
         this.name = name;
         this.properties = properties;
@@ -26,7 +26,7 @@ public class Process implements java.io.Serializable, interfaces.ProcessInterfac
     @Override
     public String getName()
     {
-        return name.substring(0, name.length()-36);
+        return name;
     }
 
     @Override
@@ -45,12 +45,6 @@ public class Process implements java.io.Serializable, interfaces.ProcessInterfac
     public void setProperties(Hashtable properties)
     {
         this.properties = properties;
-    }
-
-    @Override
-    public String getFullName()
-    {
-        return name;
     }
 
 }

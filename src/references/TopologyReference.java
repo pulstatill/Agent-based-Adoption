@@ -3,9 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package topology;
+package references;
 
-import interfaces.ProcessInterface;
 import java.io.Serializable;
 import java.util.LinkedList;
 
@@ -13,13 +12,13 @@ import java.util.LinkedList;
  *
  * @author Philipp
  */
-public class MainTopology implements Serializable, interfaces.TopologyInterface
+public class TopologyReference implements Serializable, interfaces.TopologyInterface
 {
 
     private LinkedList<String> pList = new LinkedList<>();
     private LinkedList<String> pListFull;
 
-    public MainTopology(LinkedList<String> old)
+    public TopologyReference(LinkedList<String> old)
     {
         for(int i = 0; i < old.size(); i++)
         {

@@ -52,7 +52,7 @@ public class PRA_Agent extends Agent
             Debugger.log("DFService: " + sd.getName() + " registered");
         } catch (FIPAException fe)
         {
-            Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, fe);
+            Logger.getLogger(PRA_Agent.class.getName()).log(Level.SEVERE, null, fe);
         }
         addBehaviour(new PRABehaviour());
         Debugger.log("PRABehaviour added");

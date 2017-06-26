@@ -19,11 +19,9 @@ import jade.lang.acl.UnreadableException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import main.Debugger;
-import references.TopologyReference;
+import main.Debugger;import references.TopologyReference;
 
 /**
  *

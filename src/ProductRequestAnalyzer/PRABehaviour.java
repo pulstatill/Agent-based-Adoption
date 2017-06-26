@@ -21,7 +21,8 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import main.Debugger;import references.TopologyReference;
+import main.Debugger;
+import references.TopologyReference;
 
 /**
  *
@@ -37,6 +38,8 @@ public class PRABehaviour extends Behaviour
     private LinkedList<MessageTemplate> mts = new LinkedList<>(); // Alle Message Templates zum Empfangen der Narichten
     private DFAgentDescription template = new DFAgentDescription();
     private ServiceDescription sd = new ServiceDescription();
+    private LinkedList<ProcessInterface> pis = new LinkedList<>();
+    private interfaces.TopologyInterface mainTopology;
 
     @Override
     public void action()
@@ -116,7 +119,7 @@ public class PRABehaviour extends Behaviour
                     /* Produkt Anfrage von PRA Agent laden */
                     ProductRequestInterface prq = ((PRA_Agent) myAgent).getPrq();
                     /* Toplogy aus Antwort Naricht von Toplogy Agent laden */
-                    interfaces.TopologyInterface mainTopology = (TopologyReference) reply.getContentObject();
+                    mainTopology = (TopologyReference) reply.getContentObject();
                     /* Prüfen ob alle Prozesse vorhande und an der richtigen Stelle sind */
                     boolean outoforder = false;
                     /* Nur jedes zweite Element, in der Produktanfrage ist ein Prozess */
@@ -360,7 +363,7 @@ public class PRABehaviour extends Behaviour
                     /* Produkt Anfrage von PRA Agent laden */
                     ProductRequestInterface prq = ((PRA_Agent) myAgent).getPrq();
                     /* Toplogy aus Antwort Naricht von Toplogy Agent laden */
-                    interfaces.TopologyInterface mainTopology = (TopologyReference) reply.getContentObject();
+                    mainTopology = (TopologyReference) reply.getContentObject();
                     /* Prüfen ob alle Prozesse vorhande und an der richtigen Stelle sind */
                     boolean outoforderormissing = false, processfound = false;
                     /* Nur jedes zweite Element, in der Produktanfrage ist ein Prozess */
@@ -389,14 +392,14 @@ public class PRABehaviour extends Behaviour
                         {
                             for (String processList : mainTopology.getprocessList())
                             {
-                                if(missingprocesse.getName().equalsIgnoreCase(processList))
+                                if (missingprocesse.getName().equalsIgnoreCase(processList))
                                 {
                                     processfound = true;
                                     Debugger.log("Process: " + missingprocesse.getName() + " is not in order");
                                     break;
                                 }
                             }
-                            if(!processfound)
+                            if (!processfound)
                             {
                                 Debugger.log("Process: " + missingprocesse.getName() + " could not be found in topology");
                             }
@@ -412,5 +415,164 @@ public class PRABehaviour extends Behaviour
                 block();
             }
         }
+    }
+
+    private void step32()
+    {
+
+        while (!mts.isEmpty())
+        {
+            ACLMessage reply = myAgent.receive(mts.get(0));
+            if (reply != null)
+            {
+                mts.remove(0);
+                try
+                {
+                    pis.add((ProcessInterface) reply.getContentObject());
+                } catch (UnreadableException ex)
+                {
+                    Logger.getLogger(PRABehaviour.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else
+            {
+                block();
+            }
+        }
+        LinkedList<ProcessInterface> processesfit = new LinkedList<>();
+        LinkedList<ProcessInterface> processenotfit = new LinkedList<>();
+        int k = 0;
+        int h = 0;
+        for (int i = 0; i < (((PRA_Agent) myAgent).getPrq().getpList().size() - 1) / 2; i++)
+        {
+            boolean newlopp = true;
+            ProcessInterface prpro = (ProcessInterface) ((PRA_Agent) myAgent).getPrq().getpList().get(i * 2 + 1);
+            for (ProcessInterface pi : pis)
+            {
+                if (prpro.getName().equalsIgnoreCase(pi.getName()))
+                {
+                    boolean fits = true;
+                    Hashtable tablefe = pi.getProperties();
+                    Hashtable tableprod = ((references.ProductReference) (((PRA_Agent) myAgent).getPrq().getpList()).get(i * 2)).getProperties();
+                    Enumeration keyspro = tableprod.keys();
+                    Debugger.log("Check Product Parameter");
+                    Debugger.log("from " + pi.getName());
+                    while (keyspro.hasMoreElements())
+                    {
+                        String key = (String) keyspro.nextElement();
+
+                        if (tablefe.get(key) != null)
+                        {
+                            Debugger.log("Check key:" + key);
+                            if (!tableprod.get(key).toString().equalsIgnoreCase(tablefe.get(key).toString()))
+                            {
+                                Debugger.log("Parameter " + key + " does not fit");
+                                fits = false;
+                            } else
+                            {
+                                Debugger.log("Parameter " + key + " fits");
+                            }
+                        }
+                        if (tablefe.get(key + "_Max") != null)
+                        {
+                            Debugger.log("Check key: " + key + " to max Value");
+                            if (!((Integer) tableprod.get(key) <= (Integer) tablefe.get(key + "_Max")))
+                            {
+                                Debugger.log("Parameter " + key + " does not fit");
+                                fits = false;
+
+                            } else
+                            {
+                                Debugger.log("Parameter " + key + " fits");
+                            }
+                        }
+                        if (tablefe.get(key + "_Min") != null)
+                        {
+                            Debugger.log("Check key: " + key + " to min Value");
+                            if (!((Integer) tableprod.get(key) >= (Integer) tablefe.get(key + "_Min")))
+                            {
+                                Debugger.log("Parameter " + key + " does not fit");
+                                fits = false;
+
+                            } else
+                            {
+                                Debugger.log("Parameter " + key + " fits");
+                            }
+                        }
+                    }
+                    Hashtable tableproc = ((references.ProcessRefercence) (((PRA_Agent) myAgent).getPrq().getpList()).get(i * 2 + 1)).getProperties();
+                    keyspro = tableproc.keys();
+                    Debugger.log("Check Process Parameter");
+                    while (keyspro.hasMoreElements())
+                    {
+                        String key = (String) keyspro.nextElement();
+                        Debugger.log("Check key:" + key);
+                        if (tablefe.get(key) != null)
+                        {
+                            if (!tableproc.get(key).toString().equalsIgnoreCase(tablefe.get(key).toString()))
+                            {
+                                Debugger.log("Parameter " + key + " does not fit");
+                                fits = false;
+
+                            } else
+                            {
+                                Debugger.log("Parameter " + key + " fits");
+                            }
+                        }
+                        if (tablefe.get(key + "_Max") != null)
+                        {
+                            Debugger.log("Check key: " + key + " to max Value");
+                            if (!((Integer) tableproc.get(key) <= (Integer) tablefe.get(key + "_Max")))
+                            {
+                                Debugger.log("Parameter " + key + " does not fit");
+
+                            } else
+                            {
+                                Debugger.log("Parameter " + key + " fits");
+                            }
+                        }
+                        if (tablefe.get(key + "_Min") != null)
+                        {
+                            Debugger.log("Check key: " + key + " to min Value");
+                            if (!((Integer) tableproc.get(key) >= (Integer) tablefe.get(key + "_Min")))
+                            {
+                                Debugger.log("Parameter " + key + " does not fit");
+                                fits = false;
+
+                            } else
+                            {
+                                Debugger.log("Parameter " + key + " fits");
+                            }
+                        }
+                    }
+                    if (fits)
+                    {
+                        for (int j = k; j < mainTopology.getprocessList().size(); j++)
+                        {
+                            if (mainTopology.getFullNames().get(j).equalsIgnoreCase(pi.getFullName()))
+                            {
+                                if (newlopp)
+                                {
+                                    h = j;
+                                    newlopp = false;
+                                }
+                                else
+                                {
+                                    if( h > j)
+                                    {
+                                        h = j;
+                                    }
+                                }
+                            }
+                            
+                        }
+                    } else
+                    {
+                        processenotfit.add(pi);
+                    }
+                }
+            }
+            k = h;
+        }
+
     }
 }

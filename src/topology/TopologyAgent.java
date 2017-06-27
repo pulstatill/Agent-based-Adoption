@@ -52,7 +52,7 @@ public class TopologyAgent extends Agent
                         };
                         AgentController feAgent = getContainerController().createNewAgent("FE-Agent " + processList.getFullName(), "functionalentity.FEAgent", arg);
                         feAgent.start();
-                        Debugger.log("FE-Agent for Process " + processList + " initialized");
+                        Debugger.log("FE-Agent for Process " + processList.getFullName() + " initialized");
                     } catch (StaleProxyException ex)
                     {
                         Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, ex);

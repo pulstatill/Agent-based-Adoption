@@ -16,23 +16,30 @@ public class ProcessRefercence implements java.io.Serializable, interfaces.Proce
 
     private String name;
     private Hashtable properties;
+    private String shortname;
 
     public ProcessRefercence(String name, Hashtable properties)
     {
-        this.name = name;
+        this.shortname = name;
+        this.properties = properties;
+    }
+    public ProcessRefercence(String shortname, String uuid, Hashtable properties)
+    {
+        this.shortname = shortname;
+        this.name = shortname + uuid;
         this.properties = properties;
     }
 
     @Override
     public String getName()
     {
-        return name.substring(0, name.length()-36);
+        return shortname;
     }
 
     @Override
     public void setName(String name)
     {
-        this.name = name;
+        this.shortname = name;
     }
 
     @Override

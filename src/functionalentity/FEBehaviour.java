@@ -42,7 +42,7 @@ public class FEBehaviour extends Behaviour
                             {
                                 ACLMessage reply = msg.createReply();
                                 reply.setPerformative(ACLMessage.INFORM);
-                                Object a = ((FEAgent) myAgent).getProcesses();
+                                Object a = ((FEAgent) myAgent).getProcesses()[i];
                                 reply.setContentObject((Serializable) a);
                                 Debugger.log("Message sent to PRA " + ((FEAgent) myAgent).getName());;
                                 myAgent.send(reply);

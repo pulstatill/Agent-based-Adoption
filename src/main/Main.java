@@ -97,28 +97,28 @@ public class Main
         properties.put("Höhe_Max", new Integer(5));
         properties.put("Gewicht_Max", new Integer(5));
         properties.put("Geschwindigkeit", new Integer(2));
-        pList.add(new references.ProcessRefercence("verteilen" + UUID.randomUUID().toString(), properties));
+        pList.add(new references.ProcessRefercence("verteilen" , UUID.randomUUID().toString(), properties));
         properties = new Hashtable();
         properties.put("Durchmesser_Max", new Integer(10));
         properties.put("Höhe_Min", new Integer(2));
         properties.put("Höhe_Max", new Integer(5));
         properties.put("Gewicht_Max", new Integer(5));
         properties.put("Geschwindigkeit", new Integer(2));
-        pList.add(new references.ProcessRefercence("prüfe und transport" + UUID.randomUUID().toString(), properties));
+        pList.add(new references.ProcessRefercence("prüfe und transport" , UUID.randomUUID().toString(), properties));
         properties = new Hashtable();
         properties.put("Durchmesser_Max", new Integer(10));
         properties.put("Höhe_Max", new Integer(5));
         properties.put("Bohrdurchmesser", new Integer(1));
         properties.put("Geschwindigeit", new Integer(2));
         properties.put("Bohrtiefe", new Integer(2));
-        pList.add(new references.ProcessRefercence("bearbeiten" + UUID.randomUUID().toString(), properties));
+        pList.add(new references.ProcessRefercence("bearbeiten" , UUID.randomUUID().toString(), properties));
         properties = new Hashtable();
         properties.put("Durchmesser_Max", new Integer(10));
         properties.put("Durchmesser_Min", new Integer(2));
         properties.put("Höhe_Max", new Integer(5));
         properties.put("Gewicht_Max", new Integer(5));
         properties.put("Geschwindigkeit", new Integer(2));
-        pList.add(new references.ProcessRefercence("lagern" + UUID.randomUUID().toString(), properties));
+        pList.add(new references.ProcessRefercence("lagern" , UUID.randomUUID().toString(), properties));
         return pList;
     }
 

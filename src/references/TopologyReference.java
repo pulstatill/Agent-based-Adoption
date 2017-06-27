@@ -22,9 +22,9 @@ public class TopologyReference implements Serializable, interfaces.TopologyInter
     {
         for(int i = 0; i < old.size(); i++)
         {
-            this.pList.addLast(old.get(i));
+            this.pList.addLast(old.get(i).substring(0, old.get(i).length()-36));
         }
-        this.pList = old;
+        this.pListFull = old;
     }
 
     @Override

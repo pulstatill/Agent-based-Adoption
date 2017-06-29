@@ -7,10 +7,14 @@ package ProductRequestAnalyzer;
 
 import interfaces.ProductRequestInterface;
 import jade.core.Agent;
+import jade.core.behaviours.SimpleBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.Debugger;
@@ -35,10 +39,40 @@ public class PRA_Agent extends Agent
         {
             prq = (ProductRequestInterface) args[0];
             Debugger.log("Product Request found");
+            addBehaviour(new PRABehaviour());
         } else
         {
             Debugger.log("No ProductRequest found.");
-            doDelete();
+            addBehaviour(new SimpleBehaviour()
+            {
+                private boolean done = false;
+                @Override
+                public void action()
+                {
+                    MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
+                    ACLMessage msg = myAgent.receive(mt);
+                    if (msg != null)
+                    {
+                        try
+                        {
+                            ((PRA_Agent) myAgent).setPrq((ProductRequestInterface) msg.getContentObject());
+                            addBehaviour(new PRABehaviour());
+                            done = true;
+                        } catch (UnreadableException ex)
+                        {
+                            Logger.getLogger(PRA_Agent.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    } else
+                    {
+                        block();
+                    }
+                }
+                @Override
+                public boolean done()
+                {
+                    return done;
+                }
+            });
         }
         try
         {
@@ -54,8 +88,7 @@ public class PRA_Agent extends Agent
         {
             Logger.getLogger(PRA_Agent.class.getName()).log(Level.SEVERE, null, fe);
         }
-        addBehaviour(new PRABehaviour());
-        Debugger.log("PRABehaviour added");
+        //addBehaviour(new PRABehaviour());
     }
 
     @Override
@@ -67,5 +100,10 @@ public class PRA_Agent extends Agent
     public ProductRequestInterface getPrq()
     {
         return prq;
+    }
+
+    public void setPrq(ProductRequestInterface prq)
+    {
+        this.prq = prq;
     }
 }

@@ -5,13 +5,14 @@
  */
 package ProductRequestAnalyzer;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 /**
  *
  * @author Philipp
  */
-public class ProductRequest implements interfaces.ProductRequestInterface
+public class ProductRequest implements interfaces.ProductRequestInterface, Serializable
 {
 
     private LinkedList<Object> pList;

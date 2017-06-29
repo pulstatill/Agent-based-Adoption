@@ -16,6 +16,8 @@ import java.util.LinkedList;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import references.TopologyReference;
 
 /**
@@ -30,6 +32,24 @@ public class Main
      */
     public static void main(String[] args)
     {
+        
+        System.setProperty("sun.java2d.opengl", "true");
+        String lcOSName = System.getProperty("os.name").toLowerCase();
+        boolean IS_MAC = lcOSName.startsWith("mac os x");
+        if (IS_MAC)
+        {
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("apple.awt.application.name", "Product Request Analyzer");
+            System.setProperty("apple.awt.graphics.EnableQ2DX", "true");
+        }
+        try
+        {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex)
+        {
+            Logger.getLogger(TestMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         /**
          * * Initialisiere JADE Rutime und RMA Agent **
          */
@@ -79,9 +99,13 @@ public class Main
             {
                 new ProductRequestAnalyzer.ProductRequest(initPRQ())
             };
-            AgentController pra = cont.createNewAgent("PRA-Agent", "ProductRequestAnalyzer.PRA_Agent", args2);
+            //AgentController pra = cont.createNewAgent("PRA-Agent", "ProductRequestAnalyzer.PRA_Agent", args2);
+            AgentController pra = cont.createNewAgent("PRA-Agent", "ProductRequestAnalyzer.PRA_Agent", null);
             /* Start PRA Agent */
             pra.start();
+            
+            AgentController gui = cont.createNewAgent("GUI_Agent", "gui.GUI_Agent", null);
+            gui.start();
         } catch (StaleProxyException ex)
         {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);

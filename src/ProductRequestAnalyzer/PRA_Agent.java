@@ -18,7 +18,6 @@ import jade.lang.acl.UnreadableException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.Debugger;
-import topology.TopologyAgent;
 
 /**
  *
@@ -38,7 +37,7 @@ public class PRA_Agent extends Agent
         if (args != null && args.length > 0)
         {
             prq = (ProductRequestInterface) args[0];
-            Debugger.log("Product Request found");
+            Debugger.log("Product Request");
             addBehaviour(new PRABehaviour());
         } else
         {

@@ -3,17 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/philipp/NetBeansProjects/AnagramGame/Agent-based-Adoption/src/functionalentity/FEBehaviour.java</file>
-            <file>file:/Users/philipp/NetBeansProjects/AnagramGame/Agent-based-Adoption/src/gui/GUI_Agent.java</file>
-            <file>file:/Users/philipp/NetBeansProjects/AnagramGame/Agent-based-Adoption/src/ProductRequestAnalyzer/PRA_Agent.java</file>
-            <file>file:/Users/philipp/NetBeansProjects/AnagramGame/Agent-based-Adoption/src/interfaces/TopologyInterface.java</file>
-            <file>file:/Users/philipp/NetBeansProjects/AnagramGame/Agent-based-Adoption/src/topology/TopologyAgent.java</file>
-            <file>file:/Users/philipp/NetBeansProjects/AnagramGame/Agent-based-Adoption/src/ProductRequestAnalyzer/PRABehaviour.java</file>
-            <file>file:/Users/philipp/NetBeansProjects/AnagramGame/Agent-based-Adoption/src/interfaces/ProcessInterface.java</file>
-            <file>file:/Users/philipp/NetBeansProjects/AnagramGame/Agent-based-Adoption/src/functionalentity/FEAgent.java</file>
-            <file>file:/Users/philipp/NetBeansProjects/AnagramGame/Agent-based-Adoption/src/main/TestMain.java</file>
-            <file>file:/Users/philipp/NetBeansProjects/AnagramGame/Agent-based-Adoption/src/main/Main.java</file>
-            <file>file:/Users/philipp/NetBeansProjects/AnagramGame/Agent-based-Adoption/src/gui/MainFrame.java</file>
+            <file>file:/Users/billi/NetBeansProjects/Hiwi-Job/Agent-based-Adoption/src/main/Main.java</file>
+            <file>file:/Users/billi/NetBeansProjects/Hiwi-Job/Agent-based-Adoption/src/ProductRequestAnalyzer/PRABehaviour.java</file>
+            <file>file:/Users/billi/NetBeansProjects/Hiwi-Job/Agent-based-Adoption/src/interfaces/TopologyInterface.java</file>
         </group>
     </open-files>
 </project-private>

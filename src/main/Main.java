@@ -5,7 +5,6 @@
  */
 package main;
 
-import interfaces.ProcessInterface;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;

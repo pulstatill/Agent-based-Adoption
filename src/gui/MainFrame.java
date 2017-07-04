@@ -5,9 +5,6 @@
  */
 package gui;
 
-import com.apple.eawt.AboutHandler;
-import com.apple.eawt.AppEvent;
-import com.apple.eawt.Application;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -53,7 +50,7 @@ public class MainFrame extends JFrame
         menuItem = new JMenuItem("New Product Request");
         menuItem.addActionListener((ActionEvent e) ->
         {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported yet."); 
         });
         menuItem.getAccessibleContext().setAccessibleDescription("Create a new Product Request");
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -76,15 +73,6 @@ public class MainFrame extends JFrame
         this.add(sendbutton, BorderLayout.AFTER_LAST_LINE);
         this.setSize(600, 600);
         this.setVisible(true);
-        Application macApplication = Application.getApplication();
-        macApplication.setAboutHandler(new AboutHandler()
-        {
-            @Override
-            public void handleAbout(AppEvent.AboutEvent ae)
-            {
-                JOptionPane.showMessageDialog(myFrame, "Hallo Test", "Titel", JOptionPane.PLAIN_MESSAGE);
-            }
-        });
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
     

@@ -11,10 +11,13 @@ import java.awt.FileDialog;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.ObjectOutputStream;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
@@ -63,7 +66,11 @@ public class MainFrame extends JFrame
         menuItem = new JMenuItem("New Product Request");
         menuItem.addActionListener((ActionEvent e) ->
         {
-            throw new UnsupportedOperationException("Not supported yet.");
+            jsp.getViewport().remove(mainPanel);
+            mainPanel = new MainPanel();
+            jsp.getViewport().add(mainPanel);
+            repaint();
+            revalidate();
         });
         menuItem.getAccessibleContext().setAccessibleDescription("Create a new Product Request");
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -75,6 +82,7 @@ public class MainFrame extends JFrame
             fd.setFile("*.txt");
             fd.setVisible(true);
             String filename = fd.getFile();
+            filename = fd.getDirectory() + filename;
             if (null != filename)
             {
                 StringBuilder data = new StringBuilder();
@@ -83,12 +91,13 @@ public class MainFrame extends JFrame
                     data.append(panel.getOp().getTextField().getText());
                     data.append("\n");
                     data.append(panel.getOp().getTextArea().getText());
-                    data.append(";");
+                    data.append(";").append("\n");
                 }
                 try (BufferedWriter out = new BufferedWriter(new FileWriter(filename)))
                 {
                     String savedata = data.toString();
                     out.write(savedata);
+                    out.close();
                 } catch (Exception exc)
                 {
                     Logger.getLogger(GUI_Agent.class.getName()).log(Level.SEVERE, null, exc);
@@ -96,6 +105,52 @@ public class MainFrame extends JFrame
             }
         })));
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menu.add(menuItem);
+        menuItem = new JMenuItem("Load Product Request");
+        menuItem.addActionListener((((ActionEvent e) ->
+        {
+            FileDialog fd = new FileDialog(this, "Choose a file", FileDialog.LOAD);
+            fd.setFile("*.txt");
+            fd.setVisible(true);
+            String filename = fd.getFile();
+            filename = fd.getDirectory() + filename;
+            if (null != filename)
+            {
+                try (BufferedReader in = new BufferedReader(new FileReader(filename)))
+                {
+                    StringBuilder data = new StringBuilder();
+                    String line;
+                    while((line = in.readLine()) != null)
+                        data.append(line).append("\n");
+                        
+                    String savedData = data.toString();
+                    String[] objects = savedData.split(";");
+                    LinkedList<SetPanel> panels = new LinkedList<>();
+                    for (int i = 0; i < objects.length - 1; i++)
+                    {
+                        if(objects[i] != null || objects[i].equalsIgnoreCase(""))
+                        {
+                            String[] nameandprefs = objects[i].split("\n");
+                            SetPanel panel = new SetPanel(i);
+                            ObjectPanel obpanel = panel.getOp();
+                            obpanel.setTextField(nameandprefs[0]);
+                            StringBuilder textarea = new StringBuilder();
+                            for(int j = 1 ; j < nameandprefs.length; j++)
+                            {
+                                textarea.append(nameandprefs[j]).append("\n");
+                            }
+                            obpanel.setTextArea(textarea.toString());
+                            panels.addLast(panel);
+                        }
+                    }
+                    mainPanel.setPanels(panels);
+                } catch (Exception exc)
+                {
+                    Logger.getLogger(GUI_Agent.class.getName()).log(Level.SEVERE, null, exc);
+                }
+            }
+        })));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         menu.add(menuItem);
         menuBar.add(menu);
         this.setJMenuBar(menuBar);

@@ -9,23 +9,17 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.TextArea;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
 
 /**
  *
@@ -104,6 +98,16 @@ public class ObjectPanel extends JPanel
     public JTextArea getTextArea()
     {
         return textArea;
+    }
+
+    public void setTextField(String text)
+    {
+        this.textField.setText(text);
+    }
+
+    public void setTextArea(String text)
+    {
+        this.textArea.setText(text);
     }
 
 }

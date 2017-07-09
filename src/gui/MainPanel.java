@@ -165,5 +165,9 @@ public class MainPanel extends JPanel
     {
         return panels;
     }
-
+    public void setPanels(LinkedList<SetPanel> panels)
+    {
+        this.panels = panels;
+        addnewObject();
+    }
 }

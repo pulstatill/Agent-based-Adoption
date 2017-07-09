@@ -5,7 +5,6 @@
  */
 package gui;
 
-import ProductRequestAnalyzer.PRABehaviour;
 import ProductRequestAnalyzer.ProductRequest;
 import jade.core.AID;
 import jade.core.Agent;
@@ -20,13 +19,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import main.Debugger;
-import main.TestMain;
 import references.ProcessRefercence;
 import references.ProductReference;
 
@@ -51,7 +46,7 @@ public class GUI_Agent extends Agent
     {
         super.setup();
         Debugger.log("Hello! GUI_Agent " + getAID().getName() + " is ready");
-        
+
         new MainFrame(this);
 
     }
@@ -90,10 +85,9 @@ public class GUI_Agent extends Agent
                     properties = new Hashtable();
                     for (String prop : props)
                     {
-                        System.out.println(".action()    " + prop);
                         String propname = prop.split(":")[0].trim();
                         String value = prop.split(":")[1].trim();
-                        
+
                         try
                         {
                             int intvalue = new Integer(value);
@@ -127,6 +121,40 @@ public class GUI_Agent extends Agent
                 }
                 ProductRequest prq = new ProductRequest(plist);
 
+                try
+                {
+                    sd.setType("Process");
+                    template.addServices(sd);
+                    DFAgentDescription[] searchfe = DFService.search(myAgent, template);
+                    for (DFAgentDescription fe : searchfe)
+                    {
+                        ACLMessage informfe = new ACLMessage(ACLMessage.INFORM);
+                        informfe.addReceiver(fe.getName());
+                        informfe.setConversationId("Reset");
+                        informfe.setReplyWith("Reset done" + System.currentTimeMillis());
+                        myAgent.send(informfe);
+                        Debugger.log("Reset Behaviour of " + fe.getName());
+                    }
+                    template.removeServices(sd);
+                    sd.setType("Topology");                   
+                    template.addServices(sd);
+                    DFAgentDescription[] searchtop = DFService.search(myAgent, template);
+                    for(DFAgentDescription top : searchtop)
+                    {
+                        ACLMessage informtop = new ACLMessage(ACLMessage.INFORM);
+                        informtop.addReceiver(top.getName());
+                        informtop.setConversationId("Reset");
+                        informtop.setReplyWith("Reset done" + System.currentTimeMillis());
+                        myAgent.send(informtop);
+                        Debugger.log("Reset Behaviour of " + top.getName());
+                    }
+                    
+                } catch (FIPAException ex)
+                {
+                    Logger.getLogger(GUI_Agent.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                template.removeServices(sd);
                 sd.setType("ProductRequestAnalyzer");
                 sd.setName("Product-Request-Analyzer");
                 template.addServices(sd);
@@ -135,8 +163,8 @@ public class GUI_Agent extends Agent
                 AID prqagent;
                 try
                 {
-                    DFAgentDescription[] searchtop = DFService.search(myAgent, template);
-                    prqagent = searchtop[0].getName();
+                    DFAgentDescription[] searchprq = DFService.search(myAgent, template);
+                    prqagent = searchprq[0].getName();
                     request.addReceiver(prqagent);
                     request.setConversationId("Product Request");
                     request.setReplyWith("Request-Topology" + System.currentTimeMillis());

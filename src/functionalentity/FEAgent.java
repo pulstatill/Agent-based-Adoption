@@ -6,10 +6,14 @@
 package functionalentity;
 
 import jade.core.Agent;
+import jade.core.behaviours.SimpleBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+import jade.proto.AchieveREResponder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.Debugger;
@@ -23,6 +27,7 @@ public class FEAgent extends Agent
 {
 
     private interfaces.ProcessInterface[] process;
+    private FEBehaviour feb = new FEBehaviour();
 
     @Override
     protected void setup()
@@ -46,19 +51,46 @@ public class FEAgent extends Agent
                     sd.setName(process[i].getName());
                     dfd.addServices(sd);
                     DFService.register(this, dfd);
-                    Debugger.log("DFService: " + sd.getName() + " registered");
                 } catch (FIPAException fe)
                 {
                     Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, fe);
                 }
-                addBehaviour(new FEBehaviour());
+                addBehaviour(feb);
             }
         } else
         {
             Debugger.log("No Processes was found: " + getAID().getName());
             doDelete();
         }
+        addBehaviour(new SimpleBehaviour()
+        {
+            @Override
+            public void action()
+            {
+                MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+                ACLMessage msg = myAgent.receive(mt);
+                if (msg != null)
+                {
+                    if (msg.getConversationId().equalsIgnoreCase("Reset"))
+                    {
+                        feb.setStep(0);
+                    } else
+                    {
+                        myAgent.putBack(msg);
+                        block();
+                    }
+                } else
+                {
+                    block();
+                }
+            }
 
+            @Override
+            public boolean done()
+            {
+                return false;
+            }
+        });
     }
 
     @Override

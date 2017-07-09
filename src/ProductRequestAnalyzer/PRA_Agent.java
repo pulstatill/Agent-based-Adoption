@@ -27,6 +27,7 @@ public class PRA_Agent extends Agent
 {
 
     private ProductRequestInterface prq;
+    private PRABehaviour prab;
 
     @Override
     protected void setup()
@@ -38,7 +39,8 @@ public class PRA_Agent extends Agent
         {
             prq = (ProductRequestInterface) args[0];
             Debugger.log("Product Request");
-            addBehaviour(new PRABehaviour());
+            prab = new PRABehaviour();
+            addBehaviour(prab);
         } else
         {
             Debugger.log("No ProductRequest found.");
@@ -55,8 +57,14 @@ public class PRA_Agent extends Agent
                         try
                         {
                             ((PRA_Agent) myAgent).setPrq((ProductRequestInterface) msg.getContentObject());
-                            addBehaviour(new PRABehaviour());
-                            done = true;
+                            if(prab != null)
+                            {
+                                prab.setStep(0);
+                            }else
+                            {
+                                prab = new PRABehaviour();
+                                addBehaviour(prab);
+                            }
                         } catch (UnreadableException ex)
                         {
                             Logger.getLogger(PRA_Agent.class.getName()).log(Level.SEVERE, null, ex);
@@ -69,7 +77,7 @@ public class PRA_Agent extends Agent
                 @Override
                 public boolean done()
                 {
-                    return done;
+                    return false;
                 }
             });
         }

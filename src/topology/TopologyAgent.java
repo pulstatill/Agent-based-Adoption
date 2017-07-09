@@ -8,10 +8,13 @@ package topology;
 import interfaces.ProcessInterface;
 import interfaces.TopologyInterface;
 import jade.core.Agent;
+import jade.core.behaviours.SimpleBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
 import java.util.LinkedList;
@@ -29,6 +32,7 @@ public class TopologyAgent extends Agent
     private TopologyInterface topologyref;
     private LinkedList<ProcessInterface> pList;
     private LinkedList<String> pNameList;
+    private TopologyBehaviour tb = new TopologyBehaviour();
 
     @Override
     protected void setup()
@@ -80,7 +84,36 @@ public class TopologyAgent extends Agent
         {
             Logger.getLogger(TopologyAgent.class.getName()).log(Level.SEVERE, null, fe);
         }
-        addBehaviour(new TopologyBehaviour());
+        addBehaviour(tb);
+        addBehaviour(new SimpleBehaviour()
+        {
+            @Override
+            public void action()
+            {
+                MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+                ACLMessage msg = myAgent.receive(mt);
+                if (msg != null)
+                {
+                    if (msg.getConversationId().equalsIgnoreCase("Reset"))
+                    {
+                        tb.setStep(0);
+                    } else
+                    {
+                        myAgent.putBack(msg);
+                        block();
+                    }
+                } else
+                {
+                    block();
+                }
+            }
+
+            @Override
+            public boolean done()
+            {
+                return false;
+            }
+        });
     }
 
     @Override

@@ -13,6 +13,7 @@ import java.awt.TextArea;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -45,9 +46,23 @@ public class ObjectPanel extends JPanel
         
         try
         {
+            int position = ((SetPanel)getParent()).getPosition();
+            Color bg;
+            if(position%2 == 0 || position == 0)
+            {
+                 bg = new Color(255, 0, 0, 255);
+            }
+            else
+            {
+                bg = new Color(0, 255, 0, 255);
+            }
             image = ImageIO.read(inputStream);
-            
+            g.setColor(bg);
+            g.fillRect(0, 0, 132, 26);
+            g.fillRect(0, 28, 450, 172);
             g.drawImage(image.getScaledInstance(450, 200, Image.SCALE_DEFAULT), 0, 0,new Color(0, 0, 0, 0), null);
+            
+            
             setPreferredSize(new Dimension(450, 200));
         } catch (IOException ex)
         {
@@ -90,5 +105,5 @@ public class ObjectPanel extends JPanel
     {
         return textArea;
     }
-    
+
 }

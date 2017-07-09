@@ -67,4 +67,14 @@ public class FEBehaviour extends Behaviour
         return false;
     }
 
+    public int getStep()
+    {
+        return step;
+    }
+
+    public void setStep(int step)
+    {
+        this.step = step;
+    }
+
 }

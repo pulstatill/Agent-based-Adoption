@@ -7,6 +7,7 @@ package gui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.io.Serializable;
 import java.util.LinkedList;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
@@ -22,7 +23,7 @@ public class MainPanel extends JPanel
 
     private GroupLayout groupLayout;
     private int anz = 50;
-    private JButton arrowup, arrowdown, delete, add;
+    private JButton add;
     private LinkedList<SetPanel> panels = new LinkedList<>();
 
    
@@ -46,6 +47,8 @@ public class MainPanel extends JPanel
         add.addActionListener((ActionEvent e) ->
         {
             panels.add(new SetPanel(panels.size()));
+            panels.add(new SetPanel(panels.size()));
+            panels.get(panels.size()-1).getOp().getTextArea().setText(panels.get(panels.size()-3).getOp().getTextArea().getText());
             addnewObject();
         });
 
@@ -150,9 +153,11 @@ public class MainPanel extends JPanel
     {
         for (int j = i; j < panels.size(); j++)
         {
-            panels.get(j).setPosition(panels.get(j).getPosition() + 1);
+            panels.get(j).setPosition(panels.get(j).getPosition() + 2);
         }
         panels.add(i, new SetPanel(i));
+        panels.add(i+1, new SetPanel(i+1));
+        panels.get(i+1).getOp().getTextArea().setText(panels.get(i-1).getOp().getTextArea().getText());
         addnewObject();
     }
     

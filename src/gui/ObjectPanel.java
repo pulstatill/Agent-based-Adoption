@@ -199,4 +199,9 @@ public class ObjectPanel extends JPanel
         this.textArea.setText(text);
     }
 
+    public void setPosition(int position)
+    {
+        this.position = position;
+    }
+
 }

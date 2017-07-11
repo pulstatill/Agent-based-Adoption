@@ -73,7 +73,7 @@ public class GUI_Agent extends Agent
                             int intvalue = new Integer(value);
                             properties.put(propname, intvalue);
 
-                        } catch (Exception e)
+                        } catch (NumberFormatException e)
                         {
                             properties.put(propname, value);
                         }
@@ -93,7 +93,7 @@ public class GUI_Agent extends Agent
                             int intvalue = new Integer(value);
                             properties.put(propname, intvalue);
 
-                        } catch (Exception e)
+                        } catch (NumberFormatException e)
                         {
                             properties.put(propname, value);
                         } 

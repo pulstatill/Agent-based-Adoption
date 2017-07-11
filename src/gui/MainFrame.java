@@ -169,6 +169,7 @@ public class MainFrame extends JFrame
         this.setLayout(new BorderLayout());
         mainPanel = new MainPanel();
         jsp = new JScrollPane(mainPanel);
+        jsp.getVerticalScrollBar().setUnitIncrement(16);
         this.add(jsp, BorderLayout.CENTER);
         JButton sendbutton = new JButton("send");
         sendbutton.setPreferredSize(new Dimension(50, 20));

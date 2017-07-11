@@ -93,6 +93,7 @@ public class SetPanel extends JPanel
     public void setPosition(int position)
     {
         this.position = position;
+        this.op.setPosition(position);
     }
 
     public ObjectPanel getOp()

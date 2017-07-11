@@ -77,9 +77,9 @@ public class GUI_Agent extends Agent
                         {
                             properties.put(propname, value);
                         }
-                        plist.add(new ProductReference(panels.get(i).getOp().getTextField().getText(), properties));
                     }
-
+                    plist.add(new ProductReference(panels.get(i).getOp().getTextField().getText(), properties));
+                    
                     area = panels.get(i + 1).getOp().getTextArea().getText();
                     props = area.split("\n");
                     properties = new Hashtable();
@@ -96,9 +96,9 @@ public class GUI_Agent extends Agent
                         } catch (Exception e)
                         {
                             properties.put(propname, value);
-                        }
-                        plist.add(new ProcessRefercence(panels.get(i + 1).getOp().getTextField().getText(), properties));
+                        } 
                     }
+                    plist.add(new ProcessRefercence(panels.get(i + 1).getOp().getTextField().getText(), properties));
                 }
 
                 String area = panels.get(panels.size() - 1).getOp().getTextArea().getText();
@@ -117,8 +117,8 @@ public class GUI_Agent extends Agent
                     {
                         properties.put(propname, value);
                     }
-                    plist.add(new ProductReference(panels.get(panels.size() - 1).getOp().getTextField().getText(), properties));
                 }
+                plist.add(new ProductReference(panels.get(panels.size() - 1).getOp().getTextField().getText(), properties));
                 ProductRequest prq = new ProductRequest(plist);
 
                 try

@@ -1,1 +1,1 @@
-http://billis-imac.fritz.box:7778/acc
+http://s-8d3a2efe.on.site.uni-stuttgart.de:7778/acc

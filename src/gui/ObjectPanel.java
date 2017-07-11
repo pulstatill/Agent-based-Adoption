@@ -5,20 +5,16 @@
  */
 package gui;
 
-import com.sun.javafx.runtime.SystemProperties;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -105,7 +101,7 @@ public class ObjectPanel extends JPanel
 
                 String saveddata = data.toString();
                 String[] proc = saveddata.split(";");
-                processes = new String[proc.length-1][2];
+                processes = new String[proc.length - 1][2];
 
                 String[] nameandprefs = proc[0].split("\n");
                 processes[0][0] = nameandprefs[0];
@@ -167,7 +163,15 @@ public class ObjectPanel extends JPanel
 
     public JTextField getTextField()
     {
-        return textField;
+        if (position % 2 == 0 || position == 0)
+        {
+            return textField;
+        } else
+        {
+            textField = new JTextField();
+            textField.setText((String) processBox.getSelectedItem());
+            return textField;
+        }
     }
 
     public JTextArea getTextArea()
@@ -177,7 +181,17 @@ public class ObjectPanel extends JPanel
 
     public void setTextField(String text)
     {
-        this.textField.setText(text);
+        if (position % 2 == 0 || position == 0)
+        {
+            this.textField.setText(text);
+        }else
+        {
+            for(int i = 0; i < processBox.getItemCount(); i++)
+            {
+                if(text.equalsIgnoreCase((String)processBox.getItemAt(i)))
+                    processBox.setSelectedIndex(i);
+            }
+        }
     }
 
     public void setTextArea(String text)

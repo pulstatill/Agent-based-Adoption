@@ -1,0 +1,24 @@
+verteilen
+Durchmesser_Max:10
+Durchmesser_Min:2
+Höhe_Max:5
+Gewicht_Max:5
+Geschwindigkeit:2;
+prüfe und transport
+Durchmesser_Max:10
+Höhe_Min:2
+Höhe_Max:5
+Gewicht_Max:5
+Geschwindigkeit:2;
+bearbeiten
+Durchmesser_Max:10
+Höhe_Max:5
+Bohrdurchmesser:1
+Geschwindigkeit:2
+Bohrtiefe:2;
+lagern
+Durchmesser_Max:10
+Durchmesser_Min:2
+Höhe_Max:5
+Gewicht_Max:5
+Geschwindigkeit:2;

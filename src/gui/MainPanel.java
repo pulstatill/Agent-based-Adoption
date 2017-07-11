@@ -7,7 +7,6 @@ package gui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.io.Serializable;
 import java.util.LinkedList;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
@@ -22,7 +21,6 @@ public class MainPanel extends JPanel
 {
 
     private GroupLayout groupLayout;
-    private int anz = 50;
     private JButton add;
     private LinkedList<SetPanel> panels = new LinkedList<>();
 

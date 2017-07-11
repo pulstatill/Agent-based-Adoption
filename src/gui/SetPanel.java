@@ -65,7 +65,7 @@ public class SetPanel extends JPanel
 
         gp = new GroupLayout(this);
 
-        op = new ObjectPanel();
+        op = new ObjectPanel(position);
 
         GroupLayout.SequentialGroup vertikbuttons = gp.createSequentialGroup();
         vertikbuttons.addGap(60).addComponent(arrowup).addComponent(delete).addComponent(arrowdown);

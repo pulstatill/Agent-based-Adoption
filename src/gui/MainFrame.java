@@ -13,10 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,10 +23,8 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
-import main.Debugger;
 
 /**
  *
@@ -93,6 +89,7 @@ public class MainFrame extends JFrame
                     data.append(panel.getOp().getTextArea().getText());
                     data.append(";").append("\n");
                 }
+                
                 try (BufferedWriter out = new BufferedWriter(new FileWriter(filename)))
                 {
                     String savedata = data.toString();
@@ -120,22 +117,37 @@ public class MainFrame extends JFrame
                 {
                     StringBuilder data = new StringBuilder();
                     String line;
-                    while((line = in.readLine()) != null)
+                    while ((line = in.readLine()) != null)
+                    {
                         data.append(line).append("\n");
-                        
+                    }
+                    in.close();
                     String savedData = data.toString();
                     String[] objects = savedData.split(";");
                     LinkedList<SetPanel> panels = new LinkedList<>();
-                    for (int i = 0; i < objects.length - 1; i++)
+                    
+                    String[] nameandprefs = objects[0].split("\n");
+                    SetPanel panel = new SetPanel(0);
+                    ObjectPanel obpanel = panel.getOp();
+                    obpanel.setTextField(nameandprefs[0]);
+                    StringBuilder textarea = new StringBuilder();
+                    for (int j = 1; j < nameandprefs.length; j++)
                     {
-                        if(objects[i] != null || objects[i].equalsIgnoreCase(""))
+                        textarea.append(nameandprefs[j]).append("\n");
+                    }
+                    obpanel.setTextArea(textarea.toString());
+                    panels.addLast(panel);
+                    
+                    for (int i = 1; i < objects.length - 1; i++)
+                    {
+                        if (objects[i] != null || objects[i].equalsIgnoreCase(""))
                         {
-                            String[] nameandprefs = objects[i].split("\n");
-                            SetPanel panel = new SetPanel(i);
-                            ObjectPanel obpanel = panel.getOp();
-                            obpanel.setTextField(nameandprefs[0]);
-                            StringBuilder textarea = new StringBuilder();
-                            for(int j = 1 ; j < nameandprefs.length; j++)
+                            nameandprefs = objects[i].split("\n");
+                            panel = new SetPanel(i);
+                            obpanel = panel.getOp();
+                            obpanel.setTextField(nameandprefs[1]);
+                            textarea = new StringBuilder();
+                            for (int j = 2; j < nameandprefs.length; j++)
                             {
                                 textarea.append(nameandprefs[j]).append("\n");
                             }

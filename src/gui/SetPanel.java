@@ -32,7 +32,7 @@ public class SetPanel extends JPanel
         this.position = position;
 
         gp = new GroupLayout(this);
-
+        setOpaque(false);
         if (position % 2 == 0)
         {
             productPanel = new ProductPanel(position);
@@ -89,7 +89,8 @@ public class SetPanel extends JPanel
             horizontbuttons.addComponent(arrowup).addComponent(delete).addComponent(arrowdown);
 
             GroupLayout.SequentialGroup horizontset = gp.createSequentialGroup();
-            horizontset.addComponent(processPanel).addGap(5, 5, 5).addGroup(horizontbuttons);
+            horizontset.addComponent(processPanel, processPanel.getPreferredSize().width, processPanel.getPreferredSize().width, processPanel.getPreferredSize().width)
+                    .addGap(5, 5, 5).addGroup(horizontbuttons);
 
             GroupLayout.ParallelGroup vertikset = gp.createParallelGroup();
             vertikset.addComponent(processPanel).addGroup(gp.createSequentialGroup().addGap(7, 7, 7).addGroup(vertikbuttons));
@@ -117,8 +118,11 @@ public class SetPanel extends JPanel
         //this.op.setPosition(position);
     }
 
-    public ObjectPanel getOp()
+    public GetterInterface getallText()
     {
-        return null;
+        if(productPanel!=null)
+            return productPanel;
+        else
+            return processPanel;
     }
 }

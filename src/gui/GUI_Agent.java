@@ -61,7 +61,7 @@ public class GUI_Agent extends Agent
                 LinkedList<Object> plist = new LinkedList<>();
                 for (int i = 0; i < panels.size() - 1; i += 2)
                 {
-                    String area = panels.get(i).getOp().getTextArea().getText();
+                    String area = panels.get(i).getallText().getTextArea().getText();
                     String[] props = area.split("\n");
                     Hashtable properties = new Hashtable();
                     for (String prop : props)
@@ -78,9 +78,9 @@ public class GUI_Agent extends Agent
                             properties.put(propname, value);
                         }
                     }
-                    plist.add(new ProductReference(panels.get(i).getOp().getTextField().getText(), properties));
+                    plist.add(new ProductReference(panels.get(i).getallText().getTextField().getText(), properties));
                     
-                    area = panels.get(i + 1).getOp().getTextArea().getText();
+                    area = panels.get(i + 1).getallText().getTextArea().getText();
                     props = area.split("\n");
                     properties = new Hashtable();
                     for (String prop : props)
@@ -98,10 +98,10 @@ public class GUI_Agent extends Agent
                             properties.put(propname, value);
                         } 
                     }
-                    plist.add(new ProcessRefercence(panels.get(i + 1).getOp().getTextField().getText(), properties));
+                    plist.add(new ProcessRefercence(panels.get(i + 1).getallText().getTextField().getText(), properties));
                 }
 
-                String area = panels.get(panels.size() - 1).getOp().getTextArea().getText();
+                String area = panels.get(panels.size() - 1).getallText().getTextArea().getText();
                 String[] props = area.split("\n");
                 Hashtable properties = new Hashtable();
                 for (String prop : props)
@@ -118,7 +118,7 @@ public class GUI_Agent extends Agent
                         properties.put(propname, value);
                     }
                 }
-                plist.add(new ProductReference(panels.get(panels.size() - 1).getOp().getTextField().getText(), properties));
+                plist.add(new ProductReference(panels.get(panels.size() - 1).getallText().getTextField().getText(), properties));
                 ProductRequest prq = new ProductRequest(plist);
 
                 try

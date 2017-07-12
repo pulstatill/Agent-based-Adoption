@@ -84,9 +84,9 @@ public class MainFrame extends JFrame
                 StringBuilder data = new StringBuilder();
                 for (SetPanel panel : mainPanel.getPanels())
                 {
-                    data.append(panel.getOp().getTextField().getText());
+                    data.append(panel.getallText().getTextField().getText());
                     data.append("\n");
-                    data.append(panel.getOp().getTextArea().getText());
+                    data.append(panel.getallText().getTextArea().getText());
                     data.append(";").append("\n");
                 }
                 
@@ -128,7 +128,7 @@ public class MainFrame extends JFrame
                     
                     String[] nameandprefs = objects[0].split("\n");
                     SetPanel panel = new SetPanel(0);
-                    ObjectPanel obpanel = panel.getOp();
+                    GetterInterface obpanel = panel.getallText();
                     obpanel.setTextField(nameandprefs[0]);
                     StringBuilder textarea = new StringBuilder();
                     for (int j = 1; j < nameandprefs.length; j++)
@@ -144,7 +144,7 @@ public class MainFrame extends JFrame
                         {
                             nameandprefs = objects[i].split("\n");
                             panel = new SetPanel(i);
-                            obpanel = panel.getOp();
+                            obpanel = panel.getallText();
                             obpanel.setTextField(nameandprefs[1]);
                             textarea = new StringBuilder();
                             for (int j = 2; j < nameandprefs.length; j++)

@@ -5,8 +5,15 @@
  */
 package gui;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
@@ -23,6 +30,8 @@ public class MainPanel extends JPanel
     private GroupLayout groupLayout;
     private JButton add;
     private LinkedList<SetPanel> panels = new LinkedList<>();
+    private BufferedImage imagepanel;
+    private Point drawpoint;
 
     public MainPanel()
     {
@@ -45,7 +54,7 @@ public class MainPanel extends JPanel
         {
             panels.add(new SetPanel(panels.size()));
             panels.add(new SetPanel(panels.size()));
-            //panels.get(panels.size()-1).getOp().getTextArea().setText(panels.get(panels.size()-3).getOp().getTextArea().getText());
+            panels.get(panels.size() - 1).getallText().getTextArea().setText(panels.get(panels.size() - 3).getallText().getTextArea().getText());
             addnewObject();
         });
 
@@ -100,7 +109,7 @@ public class MainPanel extends JPanel
         }
         groupLayout.setHorizontalGroup(horiGroup);
         groupLayout.setVerticalGroup(vertikGroup);
-        setPreferredSize(new Dimension(450, 50+20+ ((panels.size()-1)/2)*(100+64+50)));
+        setPreferredSize(new Dimension(450, 50 + 20 + ((panels.size() - 1) / 2) * (100 + 64 + 50)));
         repaint();
         revalidate();
     }
@@ -151,14 +160,12 @@ public class MainPanel extends JPanel
     {
         if (panels.size() > 1)
         {
-            if (!(i + 1 == panels.size()))
-            {
-                panels.get(i + 1).setPosition(i);
-                panels.get(i + 2).setPosition(i + 1);
-            }
-
             panels.remove(i + 1);
             panels.remove(i);
+            for (int j = i; j < panels.size(); j++)
+            {
+                panels.get(j).setPosition(j);
+            }
 
             addnewObject();
         } else
@@ -191,4 +198,31 @@ public class MainPanel extends JPanel
         this.panels = panels;
         addnewObject();
     }
+
+    @Override
+    protected void paintComponent(Graphics g)
+    {
+        super.paintComponent(g);
+        if (imagepanel != null)
+        {
+            
+            BufferedImage resizedImage = new BufferedImage(200, 89, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = resizedImage.createGraphics();
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
+            g2d.drawImage(imagepanel.getScaledInstance(200, 89, Image.SCALE_DEFAULT), 0, 0, null);
+            g2d.dispose();
+            g.drawImage(resizedImage, drawpoint.x, drawpoint.y, null);
+        }
+
+    }
+    
+    public void drawPanel(BufferedImage imagepanel, Point point)
+    {
+        this.imagepanel = imagepanel;
+        drawpoint = new Point();
+        drawpoint.x = 280;
+        drawpoint.y = point.y - getLocationOnScreen().y;
+        repaint();
+    }
+
 }

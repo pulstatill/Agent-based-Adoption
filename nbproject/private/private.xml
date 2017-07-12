@@ -3,15 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/billi/NetBeansProjects/Hiwi-Job/Agent-based-Adoption/src/gui/ObjectPanel.java</file>
-            <file>file:/Users/billi/NetBeansProjects/Hiwi-Job/Agent-based-Adoption/src/main/Main.java</file>
-            <file>file:/Users/billi/NetBeansProjects/Hiwi-Job/Agent-based-Adoption/src/gui/ArrowPanel.java</file>
-            <file>file:/Users/billi/NetBeansProjects/Hiwi-Job/Agent-based-Adoption/src/gui/GUI_Agent.java</file>
-            <file>file:/Users/billi/NetBeansProjects/Hiwi-Job/Agent-based-Adoption/src/gui/MainPanel.java</file>
-            <file>file:/Users/billi/NetBeansProjects/Hiwi-Job/Agent-based-Adoption/src/gui/SetPanel.java</file>
-            <file>file:/Users/billi/NetBeansProjects/Hiwi-Job/Agent-based-Adoption/src/tree/Process.java</file>
-            <file>file:/Users/billi/NetBeansProjects/Hiwi-Job/Agent-based-Adoption/src/gui/AddButton.java</file>
-            <file>file:/Users/billi/NetBeansProjects/Hiwi-Job/Agent-based-Adoption/src/gui/MainFrame.java</file>
+            <file>file:/Users/philipp/NetBeansProjects/Agent-based-Adoption/src/ProductRequestAnalyzer/PRABehaviour.java</file>
+            <file>file:/Users/philipp/NetBeansProjects/Agent-based-Adoption/src/interfaces/ProductRequestInterface.java</file>
         </group>
     </open-files>
 </project-private>

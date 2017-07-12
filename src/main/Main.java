@@ -5,6 +5,7 @@
  */
 package main;
 
+import interfaces.NewTopologyInterface;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.wrapper.AgentContainer;
@@ -17,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import references.NewTopologyReference;
 import references.TopologyReference;
 
 /**
@@ -73,14 +75,24 @@ public class Main
             /* Initialisiere Toplogy */
             LinkedList<interfaces.ProcessInterface> pList = initTop();
             LinkedList<String> pListName = new LinkedList<String>();
-            pList.forEach((process) ->
+            LinkedList<NewTopologyInterface> newlist = new LinkedList<>();
+            for (int i = pList.size() -1; i > -1; i--)
             {
-                pListName.addLast(process.getFullName());
-            });
+                if(newlist.size() > 0)
+                {
+                    LinkedList<NewTopologyInterface> childs = new LinkedList<>();
+                    childs.add(newlist.getFirst());
+                    newlist.addFirst(new NewTopologyReference(pList.get(i).getName(), pList.get(i).getFullName(), childs, null));
+                }else
+                {
+                    
+                    newlist.add(new NewTopologyReference(pList.get(i).getName(), pList.get(i).getFullName(), null, null));
+                }
+            }
             Object[] args1 =
             {
                 pList,
-                new TopologyReference(pListName)
+                newlist.get(0)
             };
             AgentController topa = cont.createNewAgent("TopologyAgent", "topology.TopologyAgent", args1);
             /* Starte Topology Agent */
@@ -98,8 +110,8 @@ public class Main
             {
                 new ProductRequestAnalyzer.ProductRequest(initPRQ())
             };
-            //AgentController pra = cont.createNewAgent("PRA-Agent", "ProductRequestAnalyzer.PRA_Agent", args2);
-            AgentController pra = cont.createNewAgent("PRA-Agent", "ProductRequestAnalyzer.PRA_Agent", null);
+            AgentController pra = cont.createNewAgent("PRA-Agent", "ProductRequestAnalyzer.PRA_Agent", args2);
+            //AgentController pra = cont.createNewAgent("PRA-Agent", "ProductRequestAnalyzer.PRA_Agent", null);
             /* Start PRA Agent */
             pra.start();
             

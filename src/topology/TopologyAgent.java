@@ -5,6 +5,7 @@
  */
 package topology;
 
+import interfaces.NewTopologyInterface;
 import interfaces.ProcessInterface;
 import interfaces.TopologyInterface;
 import jade.core.Agent;
@@ -29,9 +30,8 @@ import main.Debugger;
 public class TopologyAgent extends Agent
 {
 
-    private TopologyInterface topologyref;
+    private NewTopologyInterface topologyref;
     private LinkedList<ProcessInterface> pList;
-    private LinkedList<String> pNameList;
     private TopologyBehaviour tb = new TopologyBehaviour();
 
     @Override
@@ -42,7 +42,7 @@ public class TopologyAgent extends Agent
         if (args != null && args.length > 0)
         {
             pList = (LinkedList<ProcessInterface>)args[0];
-            topologyref = (TopologyInterface) args[1];
+            topologyref = (NewTopologyInterface) args[1];
             Debugger.log("Topolgy found");
             if (pList != null)
             {
@@ -122,7 +122,7 @@ public class TopologyAgent extends Agent
         Debugger.log("TopologyAgent " + getAID().getName() + " terminating");
     }
 
-    public TopologyInterface getMainTopology()
+    public NewTopologyInterface getMainTopology()
     {
         return topologyref;
     }

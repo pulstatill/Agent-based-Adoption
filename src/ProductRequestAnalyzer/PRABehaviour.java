@@ -5,8 +5,10 @@
  */
 package ProductRequestAnalyzer;
 
+import interfaces.NewTopologyInterface;
 import interfaces.ProcessInterface;
 import interfaces.ProductRequestInterface;
+import interfaces.TopologyInterface;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.domain.DFService;
@@ -22,7 +24,6 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.Debugger;
-import references.TopologyReference;
 
 /**
  *
@@ -40,6 +41,9 @@ public class PRABehaviour extends Behaviour
     private ServiceDescription sd = new ServiceDescription();
     private LinkedList<ProcessInterface> pis = new LinkedList<>();
     private interfaces.TopologyInterface mainTopology;
+    private interfaces.NewTopologyInterface mainTopology2;
+    private LinkedList<LinkedList> allpossiblepaths = new LinkedList<>();
+    private LinkedList<NewTopologyInterface> walkedpath = new LinkedList<>();
 
     @Override
     public void action()
@@ -53,7 +57,7 @@ public class PRABehaviour extends Behaviour
                 break;
             case 1:
                 /* Empfange Naricht von Topology Agent und überprüfe auf Erfüllbarkeit */
-                step1();
+                step12();
                 break;
             case 2:
                 /* Frage von allen FE Agenten die Prozess Attribute an */
@@ -69,7 +73,7 @@ public class PRABehaviour extends Behaviour
                 break;
         }
     }
-    
+
     private void step0()
     {
         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
@@ -115,7 +119,7 @@ public class PRABehaviour extends Behaviour
                     /* Produkt Anfrage von PRA Agent laden */
                     ProductRequestInterface prq = ((PRA_Agent) myAgent).getPrq();
                     /* Toplogy aus Antwort Naricht von Toplogy Agent laden */
-                    mainTopology = (TopologyReference) reply.getContentObject();
+                    mainTopology = (TopologyInterface) reply.getContentObject();
                     /* Prüfen ob alle Prozesse vorhande und an der richtigen Stelle sind */
                     boolean outoforderormissing = false, processfound = false;
                     /* Nur jedes zweite Element, in der Produktanfrage ist ein Prozess */
@@ -170,7 +174,7 @@ public class PRABehaviour extends Behaviour
             block();
         }
     }
-    
+
     private void step2()
     {
         Debugger.log("PRABehaviour Step 2");
@@ -194,7 +198,7 @@ public class PRABehaviour extends Behaviour
                         processname = searchfe1.getName();
                         ACLMessage requestfe = new ACLMessage(ACLMessage.REQUEST);
                         requestfe.addReceiver(processname);
-                        requestfe.setContent(((references.ProcessRefercence)plist.get(i+1)).getName());
+                        requestfe.setContent(((references.ProcessRefercence) plist.get(i + 1)).getName());
                         requestfe.setConversationId(processname.toString());
                         requestfe.setReplyWith("Property of Process" + System.currentTimeMillis());
                         mts.add(MessageTemplate.and(MessageTemplate.MatchConversationId(requestfe.getConversationId()), MessageTemplate.MatchInReplyTo(requestfe.getReplyWith())));
@@ -343,7 +347,7 @@ public class PRABehaviour extends Behaviour
                     {
                         Debugger.log("All Parameter of Process: " + pi.getFullName() + " fits to Product Request");
                         boolean foundposition = false;
-                        for (int j = k; j < mainTopology.getprocessList().size(); j++)
+                        /*for (int j = k; j < mainTopology.getprocessList().size(); j++)
                         {
                             if (mainTopology.getFullNames().get(j).equalsIgnoreCase(pi.getFullName()))
                             {
@@ -367,10 +371,10 @@ public class PRABehaviour extends Behaviour
                         {
                             Debugger.log("Position of Process: " + pi.getFullName() + " fits");
                             processesfit.add(pi);
-                        }else
+                        } else
                         {
                             Debugger.log("Position of Process: " + pi.getFullName() + " does not fit");
-                        }
+                        }*/
                     } else
                     {
                         Debugger.log("At least one Parameter of Process: " + pi.getFullName() + " does not fit");
@@ -382,8 +386,117 @@ public class PRABehaviour extends Behaviour
         }
         step++;
     }
-    
-     @Override
+
+    private void step12()
+    {
+        Debugger.log("PRABehaviour Step 1");
+        /* Empfange Antwort von Toplogy Agent */
+        ACLMessage reply = myAgent.receive(mt);
+        if (reply != null)
+        {
+            if (reply.getPerformative() == ACLMessage.INFORM)
+            {
+                Debugger.log("Message recieved from Topology-Agent");
+                try
+                {
+                    /* Produkt Anfrage von PRA Agent laden */
+                    ProductRequestInterface prq = ((PRA_Agent) myAgent).getPrq();
+                    /* Toplogy aus Antwort Naricht von Toplogy Agent laden */
+                    mainTopology2 = (NewTopologyInterface) reply.getContentObject();
+                    /* Prüfen ob alle Prozesse vorhande und an der richtigen Stelle sind */
+                    //First step
+                    String firstprocess = ((ProcessInterface) prq.getpList().get(1)).getName();
+                    firststep(mainTopology2, firstprocess);
+                    for (int i = 1; i < (prq.getpList().size() - 1) / 2; i++)
+                    {
+                        int k = allpossiblepaths.size();
+                        for (int j = 0; j < k; j++)
+                        {
+                            secondstep(j, (NewTopologyInterface) allpossiblepaths.get(j).removeLast(), ((ProcessInterface) (prq.getpList().get(i * 2 + 1))).getName());
+                        }
+                        for (int j = k - 1; j > -1; j--)
+                        {
+                            allpossiblepaths.remove(j);
+                        }
+                    }
+                    Debugger.log(allpossiblepaths.size() + " possible pathes found");
+                } catch (UnreadableException ex)
+                {
+                    Logger.getLogger(PRABehaviour.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                step++;
+            }
+        } else
+        {
+            /* Falls keine Naricht empfangen wurden, Behaviour blockieren, bis neue Narichten empfagen wurden */
+            block();
+        }
+    }
+
+    public void firststep(NewTopologyInterface step, String searchfor)
+    {
+
+        LinkedList<NewTopologyInterface> childs = step.getChilds();
+        LinkedList<NewTopologyInterface> parents = step.getParents();
+        if (step.getName().equalsIgnoreCase(searchfor))
+        {
+            LinkedList<NewTopologyInterface> path = (LinkedList<NewTopologyInterface>) walkedpath.clone();
+            path.add(step);
+            allpossiblepaths.add(path);
+        }
+        walkedpath.add(step);
+        if (childs != null)
+        {
+            childs.forEach((child) ->
+            {
+                firststep(child, searchfor);
+            });
+        }
+        walkedpath.remove(step);
+    }
+
+    public void secondstep(int pathnumber, NewTopologyInterface step, String searchfor)
+    {
+        LinkedList<NewTopologyInterface> childs = step.getChilds();
+        LinkedList<NewTopologyInterface> parents = step.getParents();
+        if (step.getName().equalsIgnoreCase(searchfor))
+        {
+            LinkedList<NewTopologyInterface> path = (LinkedList<NewTopologyInterface>) allpossiblepaths.get(pathnumber).clone();
+            path.add(step);
+            allpossiblepaths.addLast(path);
+        }
+        allpossiblepaths.get(pathnumber).add(step);
+        if (childs != null)
+        {
+            int k = allpossiblepaths.get(pathnumber).size();
+            childs.forEach((child) ->
+            {
+                boolean loop = false;
+                for (int i = 0; i < k; i++)
+                {
+                    if (child.getFullName().equalsIgnoreCase(((NewTopologyInterface) allpossiblepaths.get(pathnumber).get(i)).getFullName()))
+                    {
+                        loop = true;
+
+                    }
+                }
+                if (!loop)
+                {
+                    secondstep(pathnumber, child, searchfor);
+                    allpossiblepaths.get(pathnumber).remove(child);
+                }
+            });
+        }
+        if (parents != null)
+        {
+            parents.forEach((parent) ->
+            {
+                secondstep(pathnumber, parent, searchfor);
+            });
+        }
+    }
+
+    @Override
     public boolean done()
     {
         return false;

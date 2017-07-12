@@ -22,65 +22,82 @@ public class SetPanel extends JPanel
 {
 
     private JButton arrowup, arrowdown, delete;
-    private ObjectPanel op;
+    private ProcessPanel processPanel;
+    private ProductPanel productPanel;
     private GroupLayout gp;
     private int position;
 
     public SetPanel(int position)
     {
         this.position = position;
-        setPreferredSize(new Dimension(500, 200));
-        arrowup = new JButton(new ImageIcon(getClass().getResource("/images/arrowup.png")));
-        arrowup.setOpaque(false);
-        arrowup.setContentAreaFilled(false);
-        arrowup.setBorderPainted(false);
-        arrowup.setFocusPainted(false);
-
-        arrowup.addActionListener((ActionEvent e) ->
-        {
-            ((MainPanel)this.getParent()).moveUp(this.position);
-        });
-
-        arrowdown = new JButton(new ImageIcon(getClass().getResource("/images/arrowdown.png")));
-        arrowdown.setOpaque(false);
-        arrowdown.setContentAreaFilled(false);
-        arrowdown.setBorderPainted(false);
-        arrowdown.setFocusPainted(false);
-
-        arrowdown.addActionListener((ActionEvent e) ->
-        {
-            ((MainPanel)this.getParent()).moveDown(this.position);
-        });
-
-        delete = new JButton(new ImageIcon(getClass().getResource("/images/delete.png")));
-        delete.setOpaque(false);
-        delete.setContentAreaFilled(false);
-        delete.setBorderPainted(false);
-        delete.setFocusPainted(false);
-
-        delete.addActionListener((ActionEvent e) ->
-        {
-            ((MainPanel)this.getParent()).removePanel(this.position);
-        });
 
         gp = new GroupLayout(this);
 
-        op = new ObjectPanel(position);
+        if (position % 2 == 0)
+        {
+            productPanel = new ProductPanel(position);
+            GroupLayout.SequentialGroup horizontset = gp.createSequentialGroup();
+            horizontset.addGap(125, 125, 125).addComponent(productPanel);
 
-        GroupLayout.SequentialGroup vertikbuttons = gp.createSequentialGroup();
-        vertikbuttons.addGap(60).addComponent(arrowup).addComponent(delete).addComponent(arrowdown);
+            GroupLayout.ParallelGroup vertikset = gp.createParallelGroup();
+            vertikset.addComponent(productPanel);
 
-        GroupLayout.ParallelGroup horizontbuttons = gp.createParallelGroup();
-        horizontbuttons.addComponent(arrowup).addComponent(delete).addComponent(arrowdown);
+            gp.setVerticalGroup(vertikset);
+            gp.setHorizontalGroup(horizontset);
+            setPreferredSize(new Dimension(175, 50));
+        } else
+        {
+            arrowup = new JButton(new ImageIcon(getClass().getResource("/images/arrowup.png")));
+            arrowup.setOpaque(false);
+            arrowup.setContentAreaFilled(false);
+            arrowup.setBorderPainted(false);
+            arrowup.setFocusPainted(false);
 
-        GroupLayout.SequentialGroup horizontset = gp.createSequentialGroup();
-        horizontset.addComponent(op).addGap(5, 5, 5).addGroup(horizontbuttons);
+            arrowup.addActionListener((ActionEvent e) ->
+            {
+                ((MainPanel) this.getParent()).moveUp(this.position);
+            });
 
-        GroupLayout.ParallelGroup vertikset = gp.createParallelGroup();
-        vertikset.addComponent(op).addGroup(vertikbuttons);
+            arrowdown = new JButton(new ImageIcon(getClass().getResource("/images/arrowdown.png")));
+            arrowdown.setOpaque(false);
+            arrowdown.setContentAreaFilled(false);
+            arrowdown.setBorderPainted(false);
+            arrowdown.setFocusPainted(false);
 
-        gp.setVerticalGroup(vertikset);
-        gp.setHorizontalGroup(horizontset);
+            arrowdown.addActionListener((ActionEvent e) ->
+            {
+                ((MainPanel) this.getParent()).moveDown(this.position);
+            });
+
+            delete = new JButton(new ImageIcon(getClass().getResource("/images/delete.png")));
+            delete.setOpaque(false);
+            delete.setContentAreaFilled(false);
+            delete.setBorderPainted(false);
+            delete.setFocusPainted(false);
+
+            delete.addActionListener((ActionEvent e) ->
+            {
+                ((MainPanel) this.getParent()).removePanel(this.position);
+            });
+
+            processPanel = new ProcessPanel();
+
+            GroupLayout.SequentialGroup vertikbuttons = gp.createSequentialGroup();
+            vertikbuttons.addComponent(arrowup).addComponent(delete).addComponent(arrowdown);
+
+            GroupLayout.ParallelGroup horizontbuttons = gp.createParallelGroup();
+            horizontbuttons.addComponent(arrowup).addComponent(delete).addComponent(arrowdown);
+
+            GroupLayout.SequentialGroup horizontset = gp.createSequentialGroup();
+            horizontset.addComponent(processPanel).addGap(5, 5, 5).addGroup(horizontbuttons);
+
+            GroupLayout.ParallelGroup vertikset = gp.createParallelGroup();
+            vertikset.addComponent(processPanel).addGroup(gp.createSequentialGroup().addGap(7, 7, 7).addGroup(vertikbuttons));
+
+            gp.setVerticalGroup(vertikset);
+            gp.setHorizontalGroup(horizontset);
+            setPreferredSize(new Dimension(350, 100));
+        }
 
         setLayout(gp);
     }
@@ -93,11 +110,15 @@ public class SetPanel extends JPanel
     public void setPosition(int position)
     {
         this.position = position;
-        this.op.setPosition(position);
+        if(productPanel != null)
+        {
+            productPanel.setPosition(position);
+        }
+        //this.op.setPosition(position);
     }
 
     public ObjectPanel getOp()
     {
-        return op;
+        return null;
     }
 }

@@ -184,6 +184,7 @@ public class MainFrame extends JFrame
         this.setSize(600, 600);
         this.setVisible(true);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        pack();
     }
 
 }

@@ -32,7 +32,7 @@ public class AddButton extends JButton
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ((MainPanel) AddButton.this.getParent()).add(AddButton.this.getPositon());
+                ((MainPanel) AddButton.this.getParent()).add(positon);
             }
         });
     }

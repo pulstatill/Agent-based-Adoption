@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import references.NewTopologyReference;
-import references.TopologyReference;
 
 /**
  *
@@ -110,8 +109,8 @@ public class Main
             {
                 new ProductRequestAnalyzer.ProductRequest(initPRQ())
             };
-            AgentController pra = cont.createNewAgent("PRA-Agent", "ProductRequestAnalyzer.PRA_Agent", args2);
-            //AgentController pra = cont.createNewAgent("PRA-Agent", "ProductRequestAnalyzer.PRA_Agent", null);
+            //AgentController pra = cont.createNewAgent("PRA-Agent", "ProductRequestAnalyzer.PRA_Agent", args2);
+            AgentController pra = cont.createNewAgent("PRA-Agent", "ProductRequestAnalyzer.PRA_Agent", null);
             /* Start PRA Agent */
             pra.start();
             

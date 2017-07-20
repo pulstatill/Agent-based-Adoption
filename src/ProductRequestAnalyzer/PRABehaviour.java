@@ -42,7 +42,7 @@ public class PRABehaviour extends Behaviour
     private LinkedList<ProcessInterface> pis = new LinkedList<>();
     private interfaces.TopologyInterface mainTopology;
     private interfaces.NewTopologyInterface mainTopology2;
-    private LinkedList<LinkedList> allpossiblepaths = new LinkedList<>();
+    private LinkedList<LinkedList> allpossiblepaths = new LinkedList<>(), savepathes = new LinkedList<>();
     private LinkedList<NewTopologyInterface> walkedpath = new LinkedList<>();
 
     @Override
@@ -179,6 +179,7 @@ public class PRABehaviour extends Behaviour
     {
         Debugger.log("PRABehaviour Step 2");
         LinkedList plist = ((PRA_Agent) myAgent).getPrq().getpList();
+        mts = new LinkedList<>();
         AID processname;
         /* Nur jedes zweite Element in der Liste ist ein Prozess */
         for (int i = 0; i < plist.size() - 1; i += 2)
@@ -239,8 +240,13 @@ public class PRABehaviour extends Behaviour
         }
         LinkedList<ProcessInterface> processesfit = new LinkedList<>();
         LinkedList<ProcessInterface> processenotfit = new LinkedList<>();
-        int k = 0;
-        int h = 0;
+        LinkedList<Integer> k = new LinkedList<>();
+        LinkedList<Integer> h = new LinkedList<>();
+        for(int i = 0; i < allpossiblepaths.size(); i++)
+        {
+            k.add(0);
+            h.add(0);
+        }
         for (int i = 0; i < (((PRA_Agent) myAgent).getPrq().getpList().size() - 1) / 2; i++)
         {
             boolean newlopp = true;
@@ -346,35 +352,60 @@ public class PRABehaviour extends Behaviour
                     if (fits)
                     {
                         Debugger.log("All Parameter of Process: " + pi.getFullName() + " fits to Product Request");
-                        boolean foundposition = false;
-                        /*for (int j = k; j < mainTopology.getprocessList().size(); j++)
+                        LinkedList<Boolean> foundposition = new LinkedList<>();
+                        for(int l = 0; l < allpossiblepaths.size(); l++)
                         {
-                            if (mainTopology.getFullNames().get(j).equalsIgnoreCase(pi.getFullName()))
+                            foundposition.add(false);
+                        }
+                        for (int l = 0; l < allpossiblepaths.size(); l++)
+                        {
+                            for (int j = k.get(l); j < allpossiblepaths.get(l).size(); j++)
                             {
-                                foundposition = true;
-                                if (newlopp)
+
+                                if (((NewTopologyInterface)allpossiblepaths.get(l).get(j)).getFullName().equalsIgnoreCase(pi.getFullName()))
                                 {
-                                    h = j;
-                                    newlopp = false;
-                                    break;
-                                } else
-                                {
-                                    if (h > j)
+                                    foundposition.remove(l);
+                                    foundposition.add(l, true);
+                                    if (newlopp)
                                     {
-                                        h = j;
+                                        if(h.get(l) != null)
+                                            h.remove(l);
+                                        h.add(l, j);
+                                        
+                                        newlopp = false;
                                         break;
+                                    } else
+                                    {
+                                        if (h.get(l) > j)
+                                        {
+                                            h.remove(l);
+                                            h.add(l, j);
+                                            break;
+                                        }
                                     }
                                 }
                             }
+                            if(!foundposition.get(l))
+                            {
+                                allpossiblepaths.remove(l);
+                                l--;
+                            }
                         }
-                        if (foundposition)
+                        boolean found = false;
+                        for(int l = 0; l < foundposition.size(); l++)
                         {
-                            Debugger.log("Position of Process: " + pi.getFullName() + " fits");
-                            processesfit.add(pi);
-                        } else
+                            if(foundposition.get(l))
+                            {
+                                found = true;
+                            }
+                        }
+                        if(found)
                         {
-                            Debugger.log("Position of Process: " + pi.getFullName() + " does not fit");
-                        }*/
+                            Debugger.log("Found Position for Process: " + pi.getFullName());
+                        }else
+                        {
+                            Debugger.log("Could not find a Position for Process: " + pi.getFullName());
+                        }
                     } else
                     {
                         Debugger.log("At least one Parameter of Process: " + pi.getFullName() + " does not fit");
@@ -388,7 +419,7 @@ public class PRABehaviour extends Behaviour
     }
 
     private void step12()
-    {
+     {
         Debugger.log("PRABehaviour Step 1");
         /* Empfange Antwort von Toplogy Agent */
         ACLMessage reply = myAgent.receive(mt);
@@ -410,13 +441,22 @@ public class PRABehaviour extends Behaviour
                     for (int i = 1; i < (prq.getpList().size() - 1) / 2; i++)
                     {
                         int k = allpossiblepaths.size();
+                        savepathes = (LinkedList) allpossiblepaths.clone();
                         for (int j = 0; j < k; j++)
                         {
                             secondstep(j, (NewTopologyInterface) allpossiblepaths.get(j).removeLast(), ((ProcessInterface) (prq.getpList().get(i * 2 + 1))).getName());
                         }
+
                         for (int j = k - 1; j > -1; j--)
                         {
                             allpossiblepaths.remove(j);
+                        }
+                        if (allpossiblepaths.size() == 0)
+                        {
+                            Debugger.log("Process " + ((NewTopologyInterface) (savepathes.get(0).getLast())).getName() + " is last rechable");
+                        }else
+                        {
+                            savepathes = (LinkedList) allpossiblepaths.clone();
                         }
                     }
                     Debugger.log(allpossiblepaths.size() + " possible pathes found");

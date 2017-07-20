@@ -30,9 +30,36 @@ public class SetPanel extends JPanel
     public SetPanel(int position)
     {
         this.position = position;
+        iNit();
+    }
 
+    public int getPosition()
+    {
+        return position;
+    }
+
+    public void setPosition(int position)
+    {
+        this.position = position;
+        if(productPanel != null)
+        {
+            productPanel.setPosition(position);
+        }
+    }
+
+    public GetterInterface getallText()
+    {
+        if(productPanel!=null)
+            return productPanel;
+        else
+            return processPanel;
+    }
+    private void iNit()
+    {
+        
         gp = new GroupLayout(this);
         setOpaque(false);
+        
         if (position % 2 == 0)
         {
             productPanel = new ProductPanel(position);
@@ -45,9 +72,18 @@ public class SetPanel extends JPanel
             gp.setVerticalGroup(vertikset);
             gp.setHorizontalGroup(horizontset);
             setPreferredSize(new Dimension(175, 50));
+            
         } else
         {
-            arrowup = new JButton(new ImageIcon(getClass().getResource("/images/arrowup.png")));
+            eLse();
+        }
+        
+        setLayout(gp);
+    }
+    
+    private void eLse()
+    {
+        arrowup = new JButton(new ImageIcon(getClass().getResource("/images/arrowup.png")));
             arrowup.setOpaque(false);
             arrowup.setContentAreaFilled(false);
             arrowup.setBorderPainted(false);
@@ -98,31 +134,5 @@ public class SetPanel extends JPanel
             gp.setVerticalGroup(vertikset);
             gp.setHorizontalGroup(horizontset);
             setPreferredSize(new Dimension(350, 100));
-        }
-
-        setLayout(gp);
-    }
-
-    public int getPosition()
-    {
-        return position;
-    }
-
-    public void setPosition(int position)
-    {
-        this.position = position;
-        if(productPanel != null)
-        {
-            productPanel.setPosition(position);
-        }
-        //this.op.setPosition(position);
-    }
-
-    public GetterInterface getallText()
-    {
-        if(productPanel!=null)
-            return productPanel;
-        else
-            return processPanel;
     }
 }

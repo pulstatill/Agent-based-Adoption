@@ -31,10 +31,13 @@ public class MainPanel extends JPanel
     private JButton add;
     private LinkedList<SetPanel> panels = new LinkedList<>();
     private BufferedImage imagepanel;
+    private LinkedList<BufferedImage> imagepanels = new LinkedList<>();
+    private LinkedList<Point> points = new LinkedList<>();
     private Point drawpoint;
 
     public MainPanel()
     {
+        
         super();
         iNit();
     }
@@ -43,8 +46,8 @@ public class MainPanel extends JPanel
     {
         groupLayout = new GroupLayout(this);
         setLayout(groupLayout);
-        setPreferredSize(new Dimension(500, 500));
-        panels.add(new SetPanel(panels.size()));
+        setPreferredSize(new Dimension(800, 500));
+        panels.add(new SetPanel(0));   
         add = new JButton(new ImageIcon(getClass().getResource("/images/new.png")));
         add.setOpaque(false);
         add.setContentAreaFilled(false);
@@ -69,7 +72,6 @@ public class MainPanel extends JPanel
 
         groupLayout.setVerticalGroup(vertikal);
         groupLayout.setHorizontalGroup(horizontal);
-
     }
 
     private void addnewObject()
@@ -109,7 +111,7 @@ public class MainPanel extends JPanel
         }
         groupLayout.setHorizontalGroup(horiGroup);
         groupLayout.setVerticalGroup(vertikGroup);
-        setPreferredSize(new Dimension(450, 50 + 20 + ((panels.size() - 1) / 2) * (100 + 64 + 50)));
+        setPreferredSize(new Dimension(800, 50 + 20 + ((panels.size() - 1) / 2) * (100 + 64 + 50)));
         repaint();
         revalidate();
     }
@@ -203,26 +205,49 @@ public class MainPanel extends JPanel
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g);
+
+        for (int i = 0; i < imagepanels.size(); i++)
+        {
+            
+            BufferedImage resizedImage = new BufferedImage(450, 80, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = resizedImage.createGraphics();
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
+            g2d.drawImage(imagepanels.get(i).getScaledInstance(450, 200, Image.SCALE_DEFAULT), 0, 0, null);
+            g.drawImage(resizedImage, points.get(i).x + 5, points.get(i).y, null);
+        }
         if (imagepanel != null)
         {
             
-            BufferedImage resizedImage = new BufferedImage(200, 89, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage resizedImage = new BufferedImage(450, 200, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2d = resizedImage.createGraphics();
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
-            g2d.drawImage(imagepanel.getScaledInstance(200, 89, Image.SCALE_DEFAULT), 0, 0, null);
-            g2d.dispose();
-            g.drawImage(resizedImage, drawpoint.x, drawpoint.y, null);
+            //g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
+            g2d.drawImage(imagepanel.getScaledInstance(450, 200, Image.SCALE_DEFAULT), 0, 0, null);
+            g.drawImage(resizedImage, drawpoint.x + 5, drawpoint.y, null);
         }
 
     }
-    
+
     public void drawPanel(BufferedImage imagepanel, Point point)
     {
-        this.imagepanel = imagepanel;
+        imagepanels.addLast(imagepanel);
+        Point pointinPanel = new Point();
+        pointinPanel.x = 280;
+        pointinPanel.y = point.y - getLocationOnScreen().y;
+        points.add(pointinPanel);
+        repaint();
+    }
+
+    public void drawPanelOnes(BufferedImage image, Point point)
+    {
+        imagepanel = image;
         drawpoint = new Point();
         drawpoint.x = 280;
         drawpoint.y = point.y - getLocationOnScreen().y;
         repaint();
     }
-
+    public void removedrawedPanel(BufferedImage image)
+    {
+        points.remove(imagepanels.indexOf(image));
+        imagepanels.remove(image);
+    }
 }

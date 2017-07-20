@@ -1,24 +1,43 @@
-verteilen
-Durchmesser_Max:10
-Durchmesser_Min:2
-Höhe_Max:5
-Gewicht_Max:5
-Geschwindigkeit:2;
-prüfe und transport
-Durchmesser_Max:10
-Höhe_Min:2
-Höhe_Max:5
-Gewicht_Max:5
-Geschwindigkeit:2;
-bearbeiten
-Durchmesser_Max:10
-Höhe_Max:5
-Bohrdurchmesser:1
-Geschwindigkeit:2
-Bohrtiefe:2;
-lagern
-Durchmesser_Max:10
-Durchmesser_Min:2
-Höhe_Max:5
-Gewicht_Max:5
-Geschwindigkeit:2;
+Distributing
+Diameter_Max:10
+Diameter_Min:2
+Height_Max:5
+Weight_Max:5
+Pace:2;
+Coating
+Diameter_Max:10
+Height_Min:2
+Height_Max:5
+Weight_Max:5
+Pace:2
+Color:Red;
+Drilling
+Diameter_Max:10
+Height_Max:5
+Drilling diameter:1
+Pace:2
+Drilling depth:2;
+Sorting
+Diameter_Max:10
+Diameter_Min:2
+Height_Max:5
+Weight_Max:5
+Pace:2;
+Color Checking
+Diameter_Max:10
+Diameter_Min:2
+Height_Max:5
+Weight_Max:5
+Pace:2;
+Material Checking
+Diameter_Max:10
+Diameter_Min:2
+Height_Max:5
+Weight_Max:5
+Pace:2;
+Drill Hole Checking
+Diameter_Max:10
+Diameter_Min:2
+Height_Max:5
+Weight_Max:5
+Pace:2;

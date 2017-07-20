@@ -25,6 +25,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import main.Debugger;
 
 /**
  *
@@ -43,6 +44,7 @@ public class MainFrame extends JFrame
 
     public MainFrame(GUI_Agent myAgent)
     {
+
         super(myAgent.getLocalName());
         this.myAgent = myAgent;
         iNit();
@@ -57,9 +59,24 @@ public class MainFrame extends JFrame
 
     private void iNit()
     {
+        long time = -System.currentTimeMillis();
+        mainPanel = new MainPanel();
+        jsp = new JScrollPane(mainPanel);
+        jsp.getVerticalScrollBar().setUnitIncrement(16);
+        this.add(jsp, BorderLayout.CENTER);
+        JButton sendbutton = new JButton("send");
+        sendbutton.addActionListener((e) ->
+        {
+            myAgent.sendoffer(mainPanel.getPanels());
+        });
+        this.add(sendbutton, BorderLayout.AFTER_LAST_LINE);
+        this.setSize(900, 600);
+        this.setVisible(true);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        pack();
         menuBar = new JMenuBar();
         menu = new JMenu("Product Request Creator");
-        menuItem = new JMenuItem("New Product Request");
+        menuItem = new JMenuItem("New Product Request"); 
         menuItem.addActionListener((ActionEvent e) ->
         {
             jsp.getViewport().remove(mainPanel);
@@ -167,24 +184,7 @@ public class MainFrame extends JFrame
         menuBar.add(menu);
         this.setJMenuBar(menuBar);
         this.setLayout(new BorderLayout());
-        mainPanel = new MainPanel();
-        jsp = new JScrollPane(mainPanel);
-        jsp.getVerticalScrollBar().setUnitIncrement(16);
-        this.add(jsp, BorderLayout.CENTER);
-        JButton sendbutton = new JButton("send");
-        sendbutton.setPreferredSize(new Dimension(50, 20));
-        sendbutton.setMinimumSize(new Dimension(50, 20));
-        sendbutton.setMaximumSize(new Dimension(50, 20));
-        sendbutton.setSize(50, 20);
-        sendbutton.addActionListener((e) ->
-        {
-            myAgent.sendoffer(mainPanel.getPanels());
-        });
-        this.add(sendbutton, BorderLayout.AFTER_LAST_LINE);
-        this.setSize(600, 600);
-        this.setVisible(true);
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        pack();
+
     }
 
 }

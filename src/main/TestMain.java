@@ -6,6 +6,8 @@
 package main;
 
 import gui.MainFrame;
+import gui.MainPanel;
+import gui.SetPanel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
@@ -39,7 +41,9 @@ public class TestMain
         {
             Logger.getLogger(TestMain.class.getName()).log(Level.SEVERE, null, ex);
         }
-        new MainFrame();
+        long time = -System.currentTimeMillis();
+        new SetPanel(0);
+                System.out.println(System.currentTimeMillis() + time +"ms");
     }
     
 }

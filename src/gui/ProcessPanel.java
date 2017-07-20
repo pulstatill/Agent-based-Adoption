@@ -40,6 +40,8 @@ public class ProcessPanel extends JPanel implements GetterInterface
     private JTextArea textArea;
     private InformationPanel ip;
     private BufferedImage image;
+    private MainPanel mainPanel;
+    private boolean paneldrawn = false;
 
     public ProcessPanel()
     {
@@ -106,7 +108,7 @@ public class ProcessPanel extends JPanel implements GetterInterface
             Logger.getLogger(GUI_Agent.class.getName()).log(Level.SEVERE, null, exc);
         }
         ip = new InformationPanel(processBox, textArea);
-        InformationFrame test = new InformationFrame(ip, false);
+        InformationFrame test = new InformationFrame(ip);
         test.dispose();
         image = new BufferedImage(450, 200, BufferedImage.TYPE_INT_ARGB);
         
@@ -125,7 +127,10 @@ public class ProcessPanel extends JPanel implements GetterInterface
                     @Override
                     public void windowClosing(WindowEvent e)
                     {
+                        ((MainPanel) getParent().getParent()).removedrawedPanel(image);
                         image = info.getImage();
+                        paneldrawn = false;
+                        repaint();
                     }
                     
                 });
@@ -146,13 +151,13 @@ public class ProcessPanel extends JPanel implements GetterInterface
             @Override
             public void mouseEntered(MouseEvent e)
             {
-                ((MainPanel) getParent().getParent()).drawPanel(image, getLocationOnScreen());
+                ((MainPanel) getParent().getParent()).drawPanelOnes(image, getLocationOnScreen());
             }
 
             @Override
             public void mouseExited(MouseEvent e)
             {
-                ((MainPanel) getParent().getParent()).drawPanel(null, getLocationOnScreen());
+                ((MainPanel) getParent().getParent()).drawPanelOnes(null, getLocationOnScreen());
             }
         });
     }
@@ -164,7 +169,11 @@ public class ProcessPanel extends JPanel implements GetterInterface
         BufferedImage image;
         String file = "/images/Object.png";
         InputStream inputStream = ObjectPanel.class.getResourceAsStream(file);
-
+        if (!paneldrawn)
+        {
+            ((MainPanel) getParent().getParent()).drawPanel(this.image, getLocationOnScreen());
+            paneldrawn = true;
+        }
         try
         {
             Color bg = new Color(0, 255, 0);
@@ -183,6 +192,7 @@ public class ProcessPanel extends JPanel implements GetterInterface
         }
     }
     
+    @Override
      public JTextField getTextField()
     {
         JTextField textField;
@@ -191,6 +201,7 @@ public class ProcessPanel extends JPanel implements GetterInterface
         return textField;
     }
 
+    @Override
     public void setTextField(String textField)
     {
         for(int i = 0; i < processBox.getItemCount(); i++)
@@ -200,11 +211,13 @@ public class ProcessPanel extends JPanel implements GetterInterface
             }
     }
 
+    @Override
     public JTextArea getTextArea()
     {
         return textArea;
     }
 
+    @Override
     public void setTextArea(String textArea)
     {
         this.textArea.setText(textArea);

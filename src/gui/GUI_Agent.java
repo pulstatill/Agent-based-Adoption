@@ -48,6 +48,7 @@ public class GUI_Agent extends Agent
         Debugger.log("Hello! GUI_Agent " + getAID().getName() + " is ready");
 
         new MainFrame(this);
+        
 
     }
 

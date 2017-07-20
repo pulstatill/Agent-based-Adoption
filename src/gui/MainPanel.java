@@ -211,7 +211,7 @@ public class MainPanel extends JPanel
             
             BufferedImage resizedImage = new BufferedImage(450, 80, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2d = resizedImage.createGraphics();
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
             g2d.drawImage(imagepanels.get(i).getScaledInstance(450, 200, Image.SCALE_DEFAULT), 0, 0, null);
             g.drawImage(resizedImage, points.get(i).x + 5, points.get(i).y, null);
         }
